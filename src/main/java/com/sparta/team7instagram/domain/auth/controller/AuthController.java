@@ -1,7 +1,9 @@
 package com.sparta.team7instagram.domain.auth.controller;
 
+import com.sparta.team7instagram.domain.auth.dto.LoginUserRequestDto;
 import com.sparta.team7instagram.domain.auth.dto.SignupUserRequestDto;
 import com.sparta.team7instagram.domain.auth.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,5 +29,20 @@ public class AuthController {
         userService.saveUser(requestDto);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * login
+     * @param requestDto
+     * @param request
+     * @return 성공 여부
+     */
+    @PostMapping("/login")
+    public ResponseEntity<String> login(
+            @RequestBody LoginUserRequestDto requestDto,
+            HttpServletRequest request){
+        userService.login(requestDto, request);
+
+        return ResponseEntity.ok("success");
     }
 }
