@@ -1,10 +1,10 @@
-package com.sparta.team7instagram.domain.auth.service;
+package com.sparta.team7instagram.domain.user.service;
 
-import com.sparta.team7instagram.domain.auth.Entity.User;
+import com.sparta.team7instagram.domain.user.entity.UserEntity;
 import com.sparta.team7instagram.domain.auth.config.PasswordEncoder;
 import com.sparta.team7instagram.domain.auth.dto.LoginUserRequestDto;
 import com.sparta.team7instagram.domain.auth.dto.SignupUserRequestDto;
-import com.sparta.team7instagram.domain.auth.repository.UserRepository;
+import com.sparta.team7instagram.domain.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
@@ -24,25 +24,25 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public void saveUser(SignupUserRequestDto requestDto) {
-        Optional<User> findUser = userRepository.findByEmail(requestDto.getEmail());
+        Optional<UserEntity> findUser = userRepository.findByEmail(requestDto.getEmail());
 
         if(findUser.isPresent()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"이미 존재하는 이메일입니다.");
         }
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
-        User user = new User(requestDto.getEmail(),encodedPassword, requestDto.getName());
+        UserEntity userEntity = new UserEntity(requestDto.getEmail(),encodedPassword, requestDto.getName());
 
-        userRepository.save(user);
+        userRepository.save(userEntity);
     }
 
     public void login(LoginUserRequestDto requestDto, HttpServletRequest request) {
-        User findUser = userRepository.findByEmail(requestDto.getEmail())
+        UserEntity findUserEntity = userRepository.findByEmail(requestDto.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Does not exist email = " + requestDto.getEmail()));
-        if(!passwordEncoder.matches(requestDto.getPassword(), findUser.getPassword())){
+        if(!passwordEncoder.matches(requestDto.getPassword(), findUserEntity.getPassword())){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "wrong password");
         }
 
         HttpSession session = request.getSession(true);
-        session.setAttribute("userId", findUser.getId());
+        session.setAttribute("userId", findUserEntity.getId());
     }
 }
