@@ -4,6 +4,7 @@ import com.sparta.team7instagram.domain.auth.dto.LoginUserRequestDto;
 import com.sparta.team7instagram.domain.auth.dto.SignupUserRequestDto;
 import com.sparta.team7instagram.domain.auth.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -44,5 +45,12 @@ public class AuthController {
         userService.login(requestDto, request);
 
         return ResponseEntity.ok("success");
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpSession session){
+        session.invalidate();
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
