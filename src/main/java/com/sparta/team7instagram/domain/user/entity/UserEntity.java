@@ -22,7 +22,8 @@ public class UserEntity {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId; // 유저 식별자
+    @Column(name = "user_id")
+    private Long id; // 유저 식별자
 
     @Column(nullable = false, unique = true) // 중복 금지
     private String email; // 이메일
@@ -43,12 +44,18 @@ public class UserEntity {
     private int feedNum; // 피드 수
 
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Follow> following = new ArrayList<>(); // 내가 팔로우한 유저 목록
+    private List<FollowEntity> following = new ArrayList<>(); // 내가 팔로우한 유저 목록
 
     @OneToMany(mappedBy = "following", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Follow> followers = new ArrayList<>(); // 나를 팔로우한 유저 목록
+    private List<FollowEntity> followers = new ArrayList<>(); // 나를 팔로우한 유저 목록
 
-    private List<String> feeds; // 피드 목록
+//  private List<String> feeds; // 피드 목록
+
+    public UserEntity(String email, String password, String name) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+    }
 
     // 유저명, 소개글 수정 메서드
     public void updateNameAndIntro(String name, String intro) {
