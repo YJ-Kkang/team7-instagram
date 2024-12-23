@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -22,6 +24,11 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public void saveUser(SignupUserRequestDto requestDto) {
+        Optional<User> findUser = userRepository.findByEmail(requestDto.getEmail());
+
+        if(findUser.isPresent()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"이미 존재하는 이메일입니다.");
+        }
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
         User user = new User(requestDto.getEmail(),encodedPassword, requestDto.getName());
 
