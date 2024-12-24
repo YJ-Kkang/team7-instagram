@@ -11,10 +11,13 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "유저가 존재하지 않습니다"),
 
     // feed
-    FEED_NOT_FOUND(HttpStatus.NOT_FOUND, "피드가 존재하지 않습니다");
+    FEED_NOT_FOUND(HttpStatus.NOT_FOUND, "피드가 존재하지 않습니다"),
 
     // comment
 
+
+
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "권한이 없습니다.");
 
     private final HttpStatus status;
     private final String message;
