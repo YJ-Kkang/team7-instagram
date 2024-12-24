@@ -50,4 +50,14 @@ public class FeedController {
 
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/{feedId}")
+    public ResponseEntity<FeedReadResponseDTO> deleteFeed(
+            @PathVariable final Long feedId,
+            final Long userId
+    ) {
+        feedService.deleteFeed(feedId, userId);
+
+        return ResponseEntity.noContent().build();
+    }
 }

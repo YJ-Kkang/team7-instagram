@@ -82,4 +82,13 @@ public class FeedService {
             }
         }
     }
+
+    @Transactional
+    public void deleteFeed(Long feedId, Long userId) {
+        User user = new User();
+
+        // 유저 정보 대조
+
+        feedRepository.deleteById(feedId);
+    }
 }
