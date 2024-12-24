@@ -1,5 +1,6 @@
 package com.sparta.team7instagram.domain.feed.dto.request;
 
+import com.sparta.team7instagram.domain.feed.dto.FeedValidationMessages;
 import com.sparta.team7instagram.domain.feed.entity.FeedEntity;
 import com.sparta.team7instagram.domain.user.entity.UserEntity;
 import jakarta.validation.constraints.NotBlank;
@@ -7,7 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.Set;
 
 public record FeedCreateRequestDto(
-        @NotBlank
+        @NotBlank(message = FeedValidationMessages.CONTENT_BLANK_MESSAGE)
         String content,
         Set<String> tags
 ) {
