@@ -1,6 +1,6 @@
 package com.sparta.team7instagram.domain.feed.entity;
 
-import com.sparta.team7instagram.domain.auth.Entity.User;
+import com.sparta.team7instagram.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -19,7 +19,7 @@ public class FeedLikeEntity {
     @ManyToOne
     @MapsId("userId")
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserEntity user;
 
     @ManyToOne
     @MapsId("feedId")
@@ -27,7 +27,7 @@ public class FeedLikeEntity {
     private FeedEntity feed;
 
     @Builder
-    public FeedLikeEntity(FeedLikeId id, User user, FeedEntity feed) {
+    public FeedLikeEntity(FeedLikeId id, UserEntity user, FeedEntity feed) {
         this.id = id;
         this.user = user;
         this.feed = feed;

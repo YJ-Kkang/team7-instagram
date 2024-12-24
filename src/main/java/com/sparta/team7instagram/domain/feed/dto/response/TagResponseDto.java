@@ -5,13 +5,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 
 @Builder(access = AccessLevel.PRIVATE)
-public record TagResponseDTO(
+public record TagResponseDto(
         Long tagId,
         String tagName
 ) {
 
-    public static TagResponseDTO from(TagEntity tag) {
-        return TagResponseDTO.builder()
+    public static TagResponseDto from(TagEntity tag) {
+        return TagResponseDto.builder()
                 .tagId(tag.getId())
                 .tagName(tag.getName())
                 .build();

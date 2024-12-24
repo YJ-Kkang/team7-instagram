@@ -1,6 +1,7 @@
 package com.sparta.team7instagram.domain.feed.entity;
 
-import com.sparta.team7instagram.domain.auth.Entity.User;
+import com.sparta.team7instagram.domain.common.BaseEntity;
+import com.sparta.team7instagram.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -14,7 +15,7 @@ import java.util.List;
 @Table(name = "feeds")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class FeedEntity {
+public class FeedEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +27,7 @@ public class FeedEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserEntity user;
 
     @OneToMany(mappedBy = "feed", cascade = CascadeType.ALL, orphanRemoval = true)
     List<FeedTagEntity> feedTags = new ArrayList<>();
@@ -35,7 +36,7 @@ public class FeedEntity {
     List<FeedLikeEntity> feedLikes = new ArrayList<>();
 
     @Builder
-    public FeedEntity(Long id, String content, User user, List<FeedTagEntity> feedTags, List<FeedLikeEntity> feedLikes) {
+    public FeedEntity(Long id, String content, UserEntity user, List<FeedTagEntity> feedTags, List<FeedLikeEntity> feedLikes) {
         this.id = id;
         this.content = content;
         this.user = user;
@@ -59,5 +60,9 @@ public class FeedEntity {
 
     public void removeAllFeedTag() {
         this.feedTags.clear();
+    }
+
+    public void removeFeedLike(FeedLikeEntity feedLike) {
+        this.feedLikes.remove(feedLike);
     }
 }

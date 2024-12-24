@@ -1,7 +1,10 @@
 package com.sparta.team7instagram.domain.feed.exception;
 
-public class FeedNotFoundException extends RuntimeException {
-    public FeedNotFoundException(String msg) {
-        super(msg);
+import com.sparta.team7instagram.global.exception.CustomRuntimeException;
+import com.sparta.team7instagram.global.exception.error.ErrorCode;
+
+public class FeedNotFoundException extends CustomRuntimeException {
+    public FeedNotFoundException(ErrorCode errorCode) {
+        super(errorCode);
     }
 }
