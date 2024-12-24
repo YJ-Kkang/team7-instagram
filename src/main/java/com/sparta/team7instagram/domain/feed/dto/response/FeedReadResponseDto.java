@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder(access = AccessLevel.PRIVATE)
-public record FeedReadResponseDTO(
+public record FeedReadResponseDto(
         Long feedId,
         String content,
-        List<TagResponseDTO> tags,
+        List<TagResponseDto> tags,
         Long userId,
         String userName,
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -22,8 +22,8 @@ public record FeedReadResponseDTO(
         LocalDateTime updatedAt
 ) {
 
-    public static FeedReadResponseDTO from(FeedEntity feed) {
-        return FeedReadResponseDTO.builder()
+    public static FeedReadResponseDto from(FeedEntity feed) {
+        return FeedReadResponseDto.builder()
                 .feedId(feed.getId())
                 .content(feed.getContent())
                 .tags(get(feed.getFeedTags()))
@@ -34,9 +34,9 @@ public record FeedReadResponseDTO(
                 .build();
     }
 
-    private static List<TagResponseDTO> get(List<FeedTagEntity> feedTags) {
+    private static List<TagResponseDto> get(List<FeedTagEntity> feedTags) {
         return feedTags.stream()
-                .map(feedTag -> TagResponseDTO.from(feedTag.getTag()))
+                .map(feedTag -> TagResponseDto.from(feedTag.getTag()))
                 .toList();
     }
 }

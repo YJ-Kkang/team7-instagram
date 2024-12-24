@@ -1,16 +1,18 @@
 package com.sparta.team7instagram.domain.feed.service;
 
-import com.sparta.team7instagram.domain.auth.Entity.User;
-import com.sparta.team7instagram.domain.feed.dto.request.FeedCreateRequestDTO;
-import com.sparta.team7instagram.domain.feed.dto.request.FeedUpdateRequestDTO;
-import com.sparta.team7instagram.domain.feed.dto.response.FeedReadResponseDTO;
+import com.sparta.team7instagram.domain.feed.dto.request.FeedCreateRequestDto;
+import com.sparta.team7instagram.domain.feed.dto.request.FeedUpdateRequestDto;
+import com.sparta.team7instagram.domain.feed.dto.response.FeedReadResponseDto;
 import com.sparta.team7instagram.domain.feed.entity.FeedEntity;
 import com.sparta.team7instagram.domain.feed.entity.FeedLikeEntity;
 import com.sparta.team7instagram.domain.feed.entity.FeedTagEntity;
 import com.sparta.team7instagram.domain.feed.exception.FeedNotFoundException;
+import com.sparta.team7instagram.domain.feed.repository.FeedLikeRepository;
 import com.sparta.team7instagram.domain.tag.entity.TagEntity;
 import com.sparta.team7instagram.domain.feed.repository.FeedRepository;
 import com.sparta.team7instagram.domain.tag.service.TagService;
+import com.sparta.team7instagram.domain.user.entity.UserEntity;
+import com.sparta.team7instagram.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,8 +29,8 @@ public class FeedService {
     private final FeedLikeRepository feedLikeRepository;
 
     @Transactional
-    public Long createFeed(FeedCreateRequestDTO request, Long userId) {
-        User user = new User();
+    public Long createFeed(FeedCreateRequestDto request, Long userId) {
+        UserEntity user = UserEntity.builder().build();
 
         // 유저 정보 대조
 
@@ -49,21 +51,21 @@ public class FeedService {
         return save.getId();
     }
 
-    public FeedReadResponseDTO findFeed(Long feedId) {
+    public FeedReadResponseDto findFeed(Long feedId) {
         FeedEntity feed = findFeedById(feedId);
 
-        return FeedReadResponseDTO.from(feed);
+        return FeedReadResponseDto.from(feed);
     }
 
-    public Page<FeedReadResponseDTO> findAllFeedByConditions(String tag, Pageable pageable, Long userId) {
-        User user = new User();
+    public Page<FeedReadResponseDto> findAllFeedByConditions(String tag, Pageable pageable, Long userId) {
+        UserEntity user = UserEntity.builder().build();
 
         return feedRepository.findFeedsByConditions(tag, pageable);
     }
 
     @Transactional
-    public void updateFeed(Long feedId, FeedUpdateRequestDTO request, Long userId) {
-        User user = new User();
+    public void updateFeed(Long feedId, FeedUpdateRequestDto request, Long userId) {
+        UserEntity user = UserEntity.builder().build();
 
         // 유저 정보 대조
 
@@ -87,7 +89,7 @@ public class FeedService {
 
     @Transactional
     public void deleteFeed(Long feedId, Long userId) {
-        User user = new User();
+        UserEntity user = UserEntity.builder().build();
 
         // 유저 정보 대조
 
@@ -96,7 +98,7 @@ public class FeedService {
 
     @Transactional
     public void createFeedLike(Long feedId, Long userId) {
-        User user = new User();
+        UserEntity user = UserEntity.builder().build();
         // 유저 정보 대조
         FeedEntity feed = findFeedById(feedId);
 
@@ -110,7 +112,7 @@ public class FeedService {
 
     @Transactional
     public void deleteFeedLike(Long feedId, Long userId) {
-        User user = new User();
+        UserEntity user = UserEntity.builder().build();
         // 유저 정보 대조
         FeedEntity feed = findFeedById(feedId);
 
@@ -125,6 +127,6 @@ public class FeedService {
 
     private FeedEntity findFeedById(Long feedId) {
         return feedRepository.findById(feedId)
-                .orElseThrow(() -> new FeedNotFoundException("피드가 존재하지 않습니다."));
+                .orElseThrow(() -> new FeedNotFoundException(ErrorCode.FEED_NOT_FOUND));
     }
 }

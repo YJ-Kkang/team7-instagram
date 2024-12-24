@@ -1,8 +1,8 @@
 package com.sparta.team7instagram.domain.feed.controller;
 
-import com.sparta.team7instagram.domain.feed.dto.request.FeedCreateRequestDTO;
-import com.sparta.team7instagram.domain.feed.dto.request.FeedUpdateRequestDTO;
-import com.sparta.team7instagram.domain.feed.dto.response.FeedReadResponseDTO;
+import com.sparta.team7instagram.domain.feed.dto.request.FeedCreateRequestDto;
+import com.sparta.team7instagram.domain.feed.dto.request.FeedUpdateRequestDto;
+import com.sparta.team7instagram.domain.feed.dto.response.FeedReadResponseDto;
 import com.sparta.team7instagram.domain.feed.service.FeedService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class FeedController {
 
     @PostMapping
     public ResponseEntity<Void> createFeed(
-            @RequestBody @Valid final FeedCreateRequestDTO request,
+            @RequestBody @Valid final FeedCreateRequestDto request,
             Long userId
     ) {
         final Long feedId = feedService.createFeed(request, userId);
@@ -36,7 +36,7 @@ public class FeedController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<FeedReadResponseDTO>> readFeeds(
+    public ResponseEntity<Page<FeedReadResponseDto>> readFeeds(
             @RequestParam(required = false) final String tagName,
             Pageable pageable,
             Long userId
@@ -45,7 +45,7 @@ public class FeedController {
     }
 
     @GetMapping("/{feedId}")
-    public ResponseEntity<FeedReadResponseDTO> readFeed(
+    public ResponseEntity<FeedReadResponseDto> readFeed(
             @PathVariable final Long feedId
     ) {
         return ResponseEntity.ok(feedService.findFeed(feedId));
@@ -54,7 +54,7 @@ public class FeedController {
     @PatchMapping("/{feedId}")
     public ResponseEntity<Void> updateFeed(
             @PathVariable final Long feedId,
-            @RequestBody final FeedUpdateRequestDTO request,
+            @RequestBody final FeedUpdateRequestDto request,
             final Long userId
     ) {
         feedService.updateFeed(feedId, request, userId);
@@ -63,7 +63,7 @@ public class FeedController {
     }
 
     @DeleteMapping("/{feedId}")
-    public ResponseEntity<FeedReadResponseDTO> deleteFeed(
+    public ResponseEntity<FeedReadResponseDto> deleteFeed(
             @PathVariable final Long feedId,
             final Long userId
     ) {
