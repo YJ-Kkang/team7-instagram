@@ -63,11 +63,18 @@ public class UserService {
      */
     @Transactional(readOnly = true)
     public UserResponseDto getUserProfile(
-            Long usedId
+            Long userId
     ) {
-        UserEntity user = userRepository.findById(usedId)
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
-        return UserResponseDto.convertFromUser(user);
+        UserEntity user = findById(userId);
+
+        return UserResponseDto.builder()
+                .name(user.getName())
+                .intro(user.getIntro())
+                .followingNum(user.getFollowing().size())
+                .followerNum(user.getFollower().size())
+//              .feedNum
+//              .feeds
+                .build();
     }
 
     /**
@@ -89,11 +96,10 @@ public class UserService {
      */
     @Transactional
     public void updateUser(
-            Long usedId,
+            Long userId,
             UserUpdateRequestDto userUpdateRequestDto
     ) {
-        UserEntity user = userRepository.findById(usedId).orElseThrow(()
-                -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+        UserEntity user = findById(userId);
         user.updateNameAndIntro(userUpdateRequestDto.getName(), userUpdateRequestDto.getIntro());
     }
 
@@ -101,20 +107,17 @@ public class UserService {
      * 유저 비밀번호 수정
      */
     @Transactional
-    public UserResponseDto updatePassword(
-            Long usedId,
+    public void updatePassword(
+            Long userId,
             UserPasswordUpdateRequestDto userPasswordUpdateRequestDto
     ) {
-        UserEntity user = userRepository.findById(usedId).orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
-        // 기존 비밀번호 확인
+        UserEntity user = findById(userId);
         if (!passwordEncoder.matches(userPasswordUpdateRequestDto.getCurrentPassword(), user.getPassword())) {
             throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
         }
-        // 새 비밀번호 설정
+
         String encodedPassword = passwordEncoder.encode(userPasswordUpdateRequestDto.getChangedPassword());
         user.updatePassword(encodedPassword);
-
-        return UserResponseDto.convertFromUser(user);
     }
 
     /**
@@ -122,17 +125,16 @@ public class UserService {
      */
     @Transactional
     public void deleteUser(
-            Long usedId,
+            Long userId,
             String password,
             HttpSession session
     ) {
-        UserEntity user = userRepository.findById(usedId).orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
-        // 비밀번호 검증
+        UserEntity user = findById(userId);
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        userRepository.deleteById(usedId);
+        userRepository.deleteById(userId);
         session.invalidate();
     }
 
@@ -144,22 +146,21 @@ public class UserService {
             Long followerId,
             Long followingId
     ) {
-        UserEntity follower = userRepository.findById(followerId)
-                .orElseThrow(() -> new IllegalArgumentException("팔로우를 시도하는 유저를 찾을 수 없습니다."));
-        UserEntity following = userRepository.findById(followingId)
-                .orElseThrow(() -> new IllegalArgumentException("팔로우 대상 유저를 찾을 수 없습니다."));
-        // 이미 팔로우 관계가 있는지 확인
+        UserEntity follower = findById(followerId);
+        UserEntity following = findById(followingId);
+        if (followerId.equals(followingId)) {
+            throw new IllegalArgumentException("자기 자신을 팔로우할 수 없습니다.");
+        }
         if (followRepository.findByFollowerAndFollowing(follower, following).isPresent()) {
             throw new IllegalArgumentException("이미 팔로우 상태입니다.");
         }
+        FollowEntity.FollowId followId = new FollowEntity.FollowId(followingId, followerId);
 
         followRepository.save(FollowEntity.builder()
+                .id(followId)
                 .follower(follower)
                 .following(following)
                 .build());
-
-        follower.increaseFollowingNum(); // 내가 팔로잉한 유저 수 증가
-        following.increaseFollowerNum(); // 나를 팔로우한 유저 수 증가
     }
 
     /**
@@ -170,17 +171,17 @@ public class UserService {
             Long followerId,
             Long followingId
     ) {
-        UserEntity follower = userRepository.findById(followerId)
-                .orElseThrow(() -> new IllegalArgumentException("팔로우를 취소하는 유저를 찾을 수 없습니다."));
-        UserEntity following = userRepository.findById(followingId)
-                .orElseThrow(() -> new IllegalArgumentException("팔로우 취소 대상 유저를 찾을 수 없습니다."));
-
+        UserEntity follower = findById(followerId);
+        UserEntity following = findById(followingId);
         FollowEntity follow = followRepository.findByFollowerAndFollowing(follower, following)
-                .orElseThrow(() -> new IllegalArgumentException("팔로우 관계가 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("이미 팔로우 상태가 아닙니다."));
 
         followRepository.delete(follow);
+    }
 
-        follower.decreaseFollowingNum(); // 내가 팔로잉한 유저 수 감소
-        following.decreaseFollowerNum(); // 나를 팔로우한 유저 수 감소
+    @Transactional(readOnly = true)
+    public UserEntity findById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
     }
 }

@@ -3,13 +3,14 @@ package com.sparta.team7instagram.domain.user.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor (access = AccessLevel.PROTECTED)
 public class UserUpdateRequestDto {
     @Pattern(
             regexp = "^[가-힣]{1,4}$",
