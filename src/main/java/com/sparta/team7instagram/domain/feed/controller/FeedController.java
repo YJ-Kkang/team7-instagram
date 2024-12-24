@@ -1,6 +1,7 @@
 package com.sparta.team7instagram.domain.feed.controller;
 
 import com.sparta.team7instagram.domain.feed.dto.request.FeedCreateRequestDTO;
+import com.sparta.team7instagram.domain.feed.dto.request.FeedUpdateRequestDTO;
 import com.sparta.team7instagram.domain.feed.dto.response.FeedReadResponseDTO;
 import com.sparta.team7instagram.domain.feed.service.FeedService;
 import jakarta.validation.Valid;
@@ -37,5 +38,16 @@ public class FeedController {
             @PathVariable final Long feedId
     ) {
         return ResponseEntity.ok(feedService.findFeed(feedId));
+    }
+
+    @PatchMapping("/{feedId}")
+    public ResponseEntity<Void> updateFeed(
+            @PathVariable final Long feedId,
+            @RequestBody final FeedUpdateRequestDTO request,
+            final Long userId
+    ) {
+        feedService.updateFeed(feedId, request, userId);
+
+        return ResponseEntity.ok().build();
     }
 }
