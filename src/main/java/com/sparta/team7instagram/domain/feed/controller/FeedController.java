@@ -6,6 +6,8 @@ import com.sparta.team7instagram.domain.feed.dto.response.FeedReadResponseDTO;
 import com.sparta.team7instagram.domain.feed.service.FeedService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -31,6 +33,15 @@ public class FeedController {
                 .toUri();
 
         return ResponseEntity.created(uri).build();
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<FeedReadResponseDTO>> readFeeds(
+            @RequestParam(required = false) final String tagName,
+            Pageable pageable,
+            Long userId
+    ) {
+        return ResponseEntity.ok(feedService.findAllFeedByConditions(tagName, pageable, userId));
     }
 
     @GetMapping("/{feedId}")
@@ -59,5 +70,25 @@ public class FeedController {
         feedService.deleteFeed(feedId, userId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{feedId}/likes")
+    public ResponseEntity<Void> createFeedLike(
+            @PathVariable final Long feedId,
+            Long userId
+    ) {
+        feedService.createFeedLike(feedId, userId);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{feedId}/likes")
+    public ResponseEntity<Void> deleteFeedLike(
+            @PathVariable final Long feedId,
+            Long userId
+    ) {
+        feedService.deleteFeedLike(feedId, userId);
+
+        return ResponseEntity.ok().build();
     }
 }

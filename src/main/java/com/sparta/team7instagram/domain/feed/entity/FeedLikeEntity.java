@@ -3,6 +3,7 @@ package com.sparta.team7instagram.domain.feed.entity;
 import com.sparta.team7instagram.domain.auth.Entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,6 +25,13 @@ public class FeedLikeEntity {
     @MapsId("feedId")
     @JoinColumn(name = "feed_id")
     private FeedEntity feed;
+
+    @Builder
+    public FeedLikeEntity(FeedLikeId id, User user, FeedEntity feed) {
+        this.id = id;
+        this.user = user;
+        this.feed = feed;
+    }
 
     public void setFeed(FeedEntity feed) {
         this.feed = feed;
