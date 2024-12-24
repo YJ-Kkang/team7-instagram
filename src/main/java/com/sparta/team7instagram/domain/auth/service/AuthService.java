@@ -13,7 +13,10 @@ public class AuthService {
      * @param id
      * @return 같으면 true, 다르면 UNAUTHORIZED 응답
      */
-    public boolean isSameUsers(Long compareId, Long id){
+    public boolean isSameUsers(
+            Long compareId,
+            Long id
+    ){
         if(!compareId.equals(id)){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
