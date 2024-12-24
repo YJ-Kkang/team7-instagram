@@ -71,16 +71,16 @@ public class UserService {
     }
 
     /**
-     * 유저 프로필 검색
+     * 유저 이름 검색
      */
     @Transactional(readOnly = true)
-    public List<UserResponseDto> searchUsersByName(
+    public List<String> searchUsersByName(
             String name
     ) {
         List<UserEntity> users = userRepository.findByNameContaining(name);
-        // Entity를 DTO로 변환
+
         return users.stream()
-                .map(UserResponseDto::convertFromUser)
+                .map(UserEntity::getName)
                 .collect(Collectors.toList());
     }
 

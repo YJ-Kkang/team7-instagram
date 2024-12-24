@@ -12,17 +12,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * 유저 관련 데이터를 처리하는 유저 컨트롤러
- */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
-    // 속성
     private final UserService userService;
-
-    // 기능
 
     /**
      * 유저 프로필 조회 API
@@ -50,30 +44,11 @@ public class UserController {
      * 유저 이름 검색 API
      * 요청-------------
      * GET /users/search?name=
-     * 응답-------------
-     * [
-     *   {
-     *        "name": "조민재",
-     *        "intro": null,
-     *        "followingNum": 0,
-     *        "followerNum": 0,
-     *        "feedNum": 0,
-     *        "feeds": null
-     *   }
-     *   {
-     *         "name": "조민재",
-     *         "intro": null,
-     *         "followingNum": 0,
-     *         "followerNum": 0,
-     *         "feedNum": 0,
-     *         "feeds": null
-     *   }
-     * ]
      */
     @GetMapping("/search")
-    public ResponseEntity<List<UserResponseDto>> searchUsersByName(@RequestParam String name) {
-        List<UserResponseDto> users = userService.searchUsersByName(name);
-        return ResponseEntity.ok(users);
+    public ResponseEntity<List<String>> searchUsersByName(@RequestParam String name) {
+        List<String> userNames = userService.searchUsersByName(name);
+        return ResponseEntity.ok(userNames);
     }
 
     /**
@@ -94,6 +69,10 @@ public class UserController {
      * 유저 비밀번호 수정 API
      * 요청--------------
      * PATCH /users/1/password
+     * {
+     *      "currentPassword": "@Qwer1234"
+     *      "changedPassword": "@Asdf1234"
+     * }
      */
     @PatchMapping("/{usedId}/password")
     public ResponseEntity<UserResponseDto> updatePassword(

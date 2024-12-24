@@ -3,7 +3,6 @@ package com.sparta.team7instagram.domain.user.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-// 팔로우 엔티티
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
