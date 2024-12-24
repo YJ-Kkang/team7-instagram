@@ -1,6 +1,7 @@
 package com.sparta.team7instagram.domain.feed.controller;
 
 import com.sparta.team7instagram.domain.feed.dto.request.FeedCreateRequestDTO;
+import com.sparta.team7instagram.domain.feed.dto.response.FeedReadResponseDTO;
 import com.sparta.team7instagram.domain.feed.service.FeedService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,5 +30,12 @@ public class FeedController {
                 .toUri();
 
         return ResponseEntity.created(uri).build();
+    }
+
+    @GetMapping("/{feedId}")
+    public ResponseEntity<FeedReadResponseDTO> readFeed(
+            @PathVariable final Long feedId
+    ) {
+        return ResponseEntity.ok(feedService.findFeed(feedId));
     }
 }
