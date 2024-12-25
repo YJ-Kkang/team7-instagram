@@ -1,12 +1,14 @@
 package com.sparta.team7instagram.domain.feed.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.sparta.team7instagram.domain.feed.dto.FeedReadResponseDtoConvert;
 import com.sparta.team7instagram.domain.feed.entity.FeedEntity;
 import com.sparta.team7instagram.domain.feed.entity.FeedTagEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder(access = AccessLevel.PRIVATE)
@@ -16,6 +18,7 @@ public record FeedReadResponseDto(
         List<TagResponseDto> tags,
         Long userId,
         String userName,
+        Integer feedLikeCount,
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         LocalDateTime createdAt,
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -29,8 +32,22 @@ public record FeedReadResponseDto(
                 .tags(get(feed.getFeedTags()))
                 .userId(feed.getUser().getId())
                 .userName(feed.getUser().getName())
-//                .createdAt(feed.getCreatedAt())
-//                .updatedAt(feed.getUpdatedAt())
+                .feedLikeCount(feed.getFeedLikes().size())
+                .createdAt(feed.getCreatedAt())
+                .updatedAt(feed.getUpdatedAt())
+                .build();
+    }
+
+    public static FeedReadResponseDto from(FeedReadResponseDtoConvert dto) {
+        return FeedReadResponseDto.builder()
+                .feedId(dto.getFeedId())
+                .content(dto.getContent())
+                .tags(new ArrayList<>())
+                .userId(dto.getUserId())
+                .userName(dto.getUserName())
+                .feedLikeCount(dto.getFeedLikeCount())
+                .createdAt(dto.getCreatedAt())
+                .updatedAt(dto.getUpdatedAt())
                 .build();
     }
 

@@ -27,10 +27,10 @@ public class FeedTagEntity {
     private TagEntity tag;
 
     @Builder
-    public FeedTagEntity(FeedTagId id, FeedEntity feed, TagEntity tag) {
-        this.id = id;
-        setFeed(feed);
-        setTag(tag);
+    public FeedTagEntity(FeedEntity feed, TagEntity tag) {
+        this.feed = feed;
+        this.tag = tag;
+        this.id = FeedTagId.builder().feedId(feed.getId()).tagId(tag.getId()).build();
     }
 
     public void setFeed(FeedEntity feed) {
