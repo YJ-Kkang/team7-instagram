@@ -1,5 +1,6 @@
 package com.sparta.team7instagram.domain.user.service;
 
+import com.sparta.team7instagram.domain.feed.entity.FeedEntity;
 import com.sparta.team7instagram.domain.user.dto.request.UserPasswordUpdateRequestDto;
 import com.sparta.team7instagram.domain.user.dto.request.UserUpdateRequestDto;
 import com.sparta.team7instagram.domain.user.dto.response.UserResponseDto;
@@ -39,7 +40,11 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"이미 존재하는 이메일입니다.");
         }
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
-        UserEntity userEntity = new UserEntity(requestDto.getEmail(),encodedPassword, requestDto.getName());
+        UserEntity userEntity = new UserEntity(
+                requestDto.getEmail(),
+                encodedPassword,
+                requestDto.getName()
+        );
 
         userRepository.save(userEntity);
     }
@@ -66,14 +71,17 @@ public class UserService {
             Long userId
     ) {
         UserEntity user = findById(userId);
+        List<String> feedTitles = user.getFeeds().stream()
+                .map(FeedEntity::getContent)
+                .collect(Collectors.toList());
 
         return UserResponseDto.builder()
                 .name(user.getName())
                 .intro(user.getIntro())
                 .followingNum(user.getFollowing().size())
                 .followerNum(user.getFollower().size())
-//              .feedNum
-//              .feeds
+                .feedNum(user.getFeeds().size())
+                .feeds(feedTitles)
                 .build();
     }
 
@@ -113,7 +121,10 @@ public class UserService {
     ) {
         UserEntity user = findById(userId);
         if (!passwordEncoder.matches(userPasswordUpdateRequestDto.getCurrentPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"현재 비밀번호가 일치하지 않습니다.");
+        }
+        if (passwordEncoder.matches(userPasswordUpdateRequestDto.getChangedPassword(), user.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"현재 비밀번호와 동일한 비밀번호로 변경할 수 없습니다.");
         }
 
         String encodedPassword = passwordEncoder.encode(userPasswordUpdateRequestDto.getChangedPassword());
@@ -130,8 +141,9 @@ public class UserService {
             HttpSession session
     ) {
         UserEntity user = findById(userId);
+
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"비밀번호가 일치하지 않습니다.");
         }
 
         userRepository.deleteById(userId);
@@ -149,10 +161,10 @@ public class UserService {
         UserEntity follower = findById(followerId);
         UserEntity following = findById(followingId);
         if (followerId.equals(followingId)) {
-            throw new IllegalArgumentException("자기 자신을 팔로우할 수 없습니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"자기 자신을 팔로우할 수 없습니다.");
         }
         if (followRepository.findByFollowerAndFollowing(follower, following).isPresent()) {
-            throw new IllegalArgumentException("이미 팔로우 상태입니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"이미 팔로우 상태입니다.");
         }
         FollowEntity.FollowId followId = new FollowEntity.FollowId(followingId, followerId);
 
@@ -174,7 +186,7 @@ public class UserService {
         UserEntity follower = findById(followerId);
         UserEntity following = findById(followingId);
         FollowEntity follow = followRepository.findByFollowerAndFollowing(follower, following)
-                .orElseThrow(() -> new IllegalArgumentException("이미 팔로우 상태가 아닙니다."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"이미 팔로우 상태가 아닙니다."));
 
         followRepository.delete(follow);
     }
@@ -182,6 +194,6 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserEntity findById(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"유저를 찾을 수 없습니다."));
     }
 }

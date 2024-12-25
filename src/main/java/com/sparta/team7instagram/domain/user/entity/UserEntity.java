@@ -1,5 +1,7 @@
 package com.sparta.team7instagram.domain.user.entity;
 
+import com.sparta.team7instagram.domain.common.BaseEntity;
+import com.sparta.team7instagram.domain.feed.entity.FeedEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,6 +37,9 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "following", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FollowEntity> follower = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FeedEntity> feeds = new ArrayList<>();
 
     public UserEntity(String email, String password, String name) {
         this.email = email;
