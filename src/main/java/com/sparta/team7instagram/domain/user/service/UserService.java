@@ -71,18 +71,7 @@ public class UserService {
             Long userId
     ) {
         UserEntity user = findById(userId);
-        List<String> feedTitles = user.getFeeds().stream()
-                .map(FeedEntity::getContent)
-                .collect(Collectors.toList());
-
-        return UserResponseDto.builder()
-                .name(user.getName())
-                .intro(user.getIntro())
-                .followingNum(user.getFollowing().size())
-                .followerNum(user.getFollower().size())
-                .feedNum(user.getFeeds().size())
-                .feeds(feedTitles)
-                .build();
+        return UserResponseDto.UserProfile(user);
     }
 
     /**
