@@ -8,7 +8,7 @@ import com.sparta.team7instagram.domain.user.entity.DeletedUserEntity;
 import com.sparta.team7instagram.domain.user.entity.FollowEntity;
 import com.sparta.team7instagram.domain.user.entity.UserEntity;
 import com.sparta.team7instagram.domain.auth.config.PasswordEncoder;
-import com.sparta.team7instagram.domain.user.exception.InvaildFollowException;
+import com.sparta.team7instagram.domain.user.exception.InvalidFollowException;
 import com.sparta.team7instagram.domain.user.exception.UserNotExistingException;
 import com.sparta.team7instagram.domain.user.repository.DeletedUserRepository;
 import com.sparta.team7instagram.domain.user.repository.FollowRepository;
@@ -104,10 +104,10 @@ public class UserService {
         UserEntity follower = findById(followerId);
         UserEntity following = findById(followingId);
         if (followerId.equals(followingId)) {
-            throw new InvaildFollowException(ErrorCode.NOT_SELF_FOLLOW);
+            throw new InvalidFollowException(ErrorCode.NOT_SELF_FOLLOW);
         }
         if (followRepository.findByFollowerAndFollowing(follower, following).isPresent()) {
-            throw new InvaildFollowException(ErrorCode.EXISTING_FOLLOW);
+            throw new InvalidFollowException(ErrorCode.EXISTING_FOLLOW);
         }
         FollowEntity.FollowId followId = new FollowEntity.FollowId(followingId, followerId);
 
@@ -126,7 +126,7 @@ public class UserService {
         UserEntity follower = findById(followerId);
         UserEntity following = findById(followingId);
         FollowEntity follow = followRepository.findByFollowerAndFollowing(follower, following)
-                .orElseThrow(() -> new InvaildFollowException(ErrorCode.NOT_FOLLOWING));
+                .orElseThrow(() -> new InvalidFollowException(ErrorCode.NOT_FOLLOWING));
 
         followRepository.delete(follow);
     }
