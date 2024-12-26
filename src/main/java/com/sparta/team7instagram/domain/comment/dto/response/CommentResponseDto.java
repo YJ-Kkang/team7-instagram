@@ -28,5 +28,4 @@ public class CommentResponseDto {
                 .updatedAt(comment.getUpdatedAt())
                 .build();
     }
-
 }

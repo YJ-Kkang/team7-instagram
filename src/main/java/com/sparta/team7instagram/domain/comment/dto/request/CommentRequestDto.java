@@ -4,7 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class CommentRequestDto {
-
     String content;
 
     Long feedId;
