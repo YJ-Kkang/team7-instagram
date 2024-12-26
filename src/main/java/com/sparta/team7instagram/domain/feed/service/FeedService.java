@@ -13,6 +13,7 @@ import com.sparta.team7instagram.domain.feed.exception.FeedNotFoundException;
 import com.sparta.team7instagram.domain.tag.entity.TagEntity;
 import com.sparta.team7instagram.domain.feed.repository.FeedRepository;
 import com.sparta.team7instagram.domain.tag.service.TagService;
+import com.sparta.team7instagram.domain.user.entity.FollowEntity;
 import com.sparta.team7instagram.domain.user.entity.UserEntity;
 import com.sparta.team7instagram.domain.user.repository.FollowRepository;
 import com.sparta.team7instagram.domain.user.service.UserService;
@@ -72,7 +73,10 @@ public class FeedService {
             Pageable pageable,
             Long userId
     ) {
-        List<Long> followingIds = followRepository.findFollowingIdsByFollowerId(userId);
+        List<Long> followingIds = followRepository.findByFollowerId(userId).stream()
+                .map(FollowEntity::getFollowing)
+                .map(UserEntity::getId)
+                .toList();
 
         return feedRepository.findFeedsByConditions(
                 tagName,
