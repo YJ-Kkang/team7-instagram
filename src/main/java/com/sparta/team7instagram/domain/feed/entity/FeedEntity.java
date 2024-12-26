@@ -65,4 +65,10 @@ public class FeedEntity extends BaseEntity {
     public void removeFeedLike(FeedLikeEntity feedLike) {
         this.feedLikes.remove(feedLike);
     }
+
+    public void updateContent(String content) {
+        if (content != null) {
+            this.content = content;
+        }
+    }
 }
