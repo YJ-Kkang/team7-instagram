@@ -3,7 +3,6 @@ package com.sparta.team7instagram.domain.auth.controller;
 import com.sparta.team7instagram.domain.auth.dto.LoginUserRequestDto;
 import com.sparta.team7instagram.domain.auth.dto.SignupUserRequestDto;
 import com.sparta.team7instagram.domain.auth.service.AuthService;
-import com.sparta.team7instagram.domain.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -22,7 +21,6 @@ import static com.sparta.team7instagram.global.util.SessionUtil.removeSession;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final UserService userService;
     private final AuthService authService;
 
     /**

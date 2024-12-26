@@ -2,6 +2,7 @@ package com.sparta.team7instagram.domain.auth.filter;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.PatternMatchUtils;
@@ -31,10 +32,14 @@ public class LoginFilter implements Filter {
         if (!isWhiteList(requestURI)) {
             HttpSession session = httpRequest.getSession(false);
 
-            // 로그인하지 않은 사용자인 경우
-            if (session == null || session.getAttribute("userId") == null) {
-                throw new RuntimeException("로그인 해주세요.");
-            }
+                // 로그인하지 않은 사용자인 경우
+                if (session == null || session.getAttribute("USER-ID") == null) {
+                    HttpServletResponse httpResponse = (HttpServletResponse) response;
+                    httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    httpResponse.setContentType("application/json;charset=UTF-8");
+                    httpResponse.getWriter().write("로그인이 필요합니다.");
+                    return;
+                }
         }
 
         chain.doFilter(request, response);
@@ -43,7 +48,9 @@ public class LoginFilter implements Filter {
     }
 
     // 로그인 여부를 확인하는 URL인지 체크하는 메서드
-    private boolean isWhiteList(String requestURI) {
+    private boolean isWhiteList(
+            String requestURI
+    ) {
         return PatternMatchUtils.simpleMatch(WHITE_LIST, requestURI);
     }
 }
