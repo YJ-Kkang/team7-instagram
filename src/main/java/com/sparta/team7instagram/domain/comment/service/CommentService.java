@@ -60,7 +60,7 @@ public class CommentService {
 
         CommentEntity comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFound(ErrorCode.COMMENT_NOT_FOUND));
 
-        if (!comment.getUser().getId().equals(userId) || !comment.getFeed().getUser().getId().equals(userId)) {
+        if (!comment.getUser().getId().equals(userId) && !comment.getFeed().getUser().getId().equals(userId)) {
             throw new UnauthorizedException(ErrorCode.UNAUTHORIZED);
         }
 
