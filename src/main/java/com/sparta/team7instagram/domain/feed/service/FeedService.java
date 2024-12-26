@@ -8,7 +8,6 @@ import com.sparta.team7instagram.domain.feed.entity.FeedEntity;
 import com.sparta.team7instagram.domain.feed.entity.FeedLikeEntity;
 import com.sparta.team7instagram.domain.feed.entity.FeedTagEntity;
 import com.sparta.team7instagram.domain.feed.exception.FeedNotFoundException;
-import com.sparta.team7instagram.domain.feed.repository.FeedLikeRepository;
 import com.sparta.team7instagram.domain.tag.entity.TagEntity;
 import com.sparta.team7instagram.domain.feed.repository.FeedRepository;
 import com.sparta.team7instagram.domain.tag.service.TagService;
@@ -35,7 +34,6 @@ public class FeedService {
     private final AuthService authService;
     private final UserRepository userRepository;
     private final FeedRepository feedRepository;
-    private final FeedLikeRepository feedLikeRepository;
     private final FollowRepository followRepository;
 
     @Transactional
@@ -92,7 +90,7 @@ public class FeedService {
 
         authService.isSameUsers(feed.getUser().getId(), user.getId());
 
-        if (!request.tags().isEmpty()) {
+        if (request.tags() != null) {
             feed.removeAllFeedTag();
 
             for (String tagName : request.tags()) {
@@ -106,6 +104,8 @@ public class FeedService {
                 feed.addFeedTag(feedTag);
             }
         }
+
+        feed.updateContent(request.content());
     }
 
     @Transactional
@@ -143,13 +143,12 @@ public class FeedService {
 
         authService.isSameUsers(feed.getUser().getId(), user.getId());
 
-        FeedLikeEntity feedLike = FeedLikeEntity.builder()
-                .feed(feed)
-                .user(user)
-                .build();
+        FeedLikeEntity feedLike = feed.getFeedLikes().stream()
+                .filter(like -> like.getUser().equals(user))
+                .findFirst()
+                .orElseThrow(() -> new FeedNotFoundException(ErrorCode.FEED_LIKE_NOT_FOUND));
 
         feed.removeFeedLike(feedLike);
-        feedLikeRepository.delete(feedLike);
     }
 
     private FeedEntity findFeedById(Long feedId) {
