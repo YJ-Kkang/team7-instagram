@@ -1,13 +1,13 @@
 package com.sparta.team7instagram.domain.auth.service;
 
 import com.sparta.team7instagram.domain.auth.config.PasswordEncoder;
+
 import com.sparta.team7instagram.domain.auth.dto.requestDto.LoginUserRequestDto;
 import com.sparta.team7instagram.domain.auth.dto.requestDto.SignupUserRequestDto;
-import com.sparta.team7instagram.domain.auth.exception.DifferentUserException;
-import com.sparta.team7instagram.domain.auth.exception.EmailNotFoundException;
-import com.sparta.team7instagram.domain.auth.exception.ExistingEmailException;
-import com.sparta.team7instagram.domain.auth.exception.InvalidPasswordException;
+import com.sparta.team7instagram.domain.auth.exception.*;
+
 import com.sparta.team7instagram.domain.user.entity.UserEntity;
+import com.sparta.team7instagram.domain.user.repository.DeletedUserRepository;
 import com.sparta.team7instagram.domain.user.repository.UserRepository;
 import com.sparta.team7instagram.global.exception.error.ErrorCode;
 import com.sparta.team7instagram.global.util.SessionUtil;
@@ -21,6 +21,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final DeletedUserRepository deletedUserRepository;
 
     public Long saveUser(
             SignupUserRequestDto requestDto
@@ -74,6 +75,9 @@ public class AuthService {
     public void checkEmailDuplicateAndThrow(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new ExistingEmailException(ErrorCode.EXISTING_EMAIL);
+        }
+        if (deletedUserRepository.existsByEmail(email)) {
+            throw new DeactivatedEmailException(ErrorCode.DEACTIVATED_EMAIL);
         }
     }
 }
