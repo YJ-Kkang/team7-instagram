@@ -8,12 +8,15 @@ import com.sparta.team7instagram.domain.auth.exception.EmailNotFoundException;
 import com.sparta.team7instagram.domain.auth.exception.ExistingEmailException;
 import com.sparta.team7instagram.domain.auth.exception.InvalidPasswordException;
 import com.sparta.team7instagram.domain.user.entity.UserEntity;
+import com.sparta.team7instagram.domain.user.repository.DeletedUserRepository;
 import com.sparta.team7instagram.domain.user.repository.UserRepository;
 import com.sparta.team7instagram.global.exception.error.ErrorCode;
 import com.sparta.team7instagram.global.util.SessionUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @RequiredArgsConstructor
 @Service
@@ -21,6 +24,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final DeletedUserRepository deletedUserRepository;
 
     public Long saveUser(
             SignupUserRequestDto requestDto
@@ -72,6 +76,9 @@ public class AuthService {
     public void checkEmailDuplicateAndThrow(String email){
         if(userRepository.existsByEmail(email)){
             throw new ExistingEmailException(ErrorCode.EXISTING_EMAIL);
+        }
+        if(deletedUserRepository.existsByEmail(email)){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"삭제된 이메일 입니다.");
         }
     }
 }

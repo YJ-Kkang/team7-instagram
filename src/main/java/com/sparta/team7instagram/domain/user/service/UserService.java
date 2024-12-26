@@ -3,19 +3,23 @@ package com.sparta.team7instagram.domain.user.service;
 import com.sparta.team7instagram.domain.user.dto.request.UserPasswordUpdateRequestDto;
 import com.sparta.team7instagram.domain.user.dto.request.UserUpdateRequestDto;
 import com.sparta.team7instagram.domain.user.dto.response.UserResponseDto;
+import com.sparta.team7instagram.domain.user.entity.DeletedUserEntity;
 import com.sparta.team7instagram.domain.user.entity.FollowEntity;
 import com.sparta.team7instagram.domain.user.entity.UserEntity;
 import com.sparta.team7instagram.domain.auth.config.PasswordEncoder;
+import com.sparta.team7instagram.domain.user.repository.DeletedUserRepository;
 import com.sparta.team7instagram.domain.user.repository.FollowRepository;
 import com.sparta.team7instagram.domain.user.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class UserService {
@@ -23,6 +27,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
     private final PasswordEncoder passwordEncoder;
+    private final DeletedUserRepository deletedUserRepository;
 
     /**
      * 유저 프로필 조회
@@ -99,6 +104,9 @@ public class UserService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
+
+        DeletedUserEntity deletedUser = new DeletedUserEntity(user.getEmail());
+        deletedUserRepository.save(deletedUser);
 
         userRepository.deleteById(userId);
         session.invalidate();
