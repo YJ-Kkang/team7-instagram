@@ -8,7 +8,6 @@ import com.sparta.team7instagram.domain.feed.entity.FeedEntity;
 import com.sparta.team7instagram.domain.feed.entity.FeedLikeEntity;
 import com.sparta.team7instagram.domain.feed.entity.FeedTagEntity;
 import com.sparta.team7instagram.domain.feed.exception.FeedNotFoundException;
-import com.sparta.team7instagram.domain.feed.repository.FeedLikeRepository;
 import com.sparta.team7instagram.domain.tag.entity.TagEntity;
 import com.sparta.team7instagram.domain.feed.repository.FeedRepository;
 import com.sparta.team7instagram.domain.tag.service.TagService;
@@ -147,7 +146,7 @@ public class FeedService {
         FeedLikeEntity feedLike = feed.getFeedLikes().stream()
                 .filter(like -> like.getUser().equals(user))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("FeedLike not found"));
+                .orElseThrow(() -> new FeedNotFoundException(ErrorCode.FEED_LIKE_NOT_FOUND));
 
         feed.removeFeedLike(feedLike);
     }
