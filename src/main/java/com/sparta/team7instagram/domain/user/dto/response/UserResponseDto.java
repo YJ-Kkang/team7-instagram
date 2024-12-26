@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-@NoArgsConstructor (access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class UserResponseDto {
@@ -19,7 +19,7 @@ public class UserResponseDto {
     private int feedNum;
     private List<String> feeds;
 
-    public static UserResponseDto UserProfile(UserEntity user) {
+    public static UserResponseDto from(UserEntity user) {
         List<String> feedTitles = user.getFeeds().stream()
                 .map(FeedEntity::getContent)
                 .collect(Collectors.toList());

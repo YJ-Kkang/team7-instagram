@@ -25,12 +25,12 @@ public class UserController {
      * GET /users/1
      * 응답------------------
      * {
-     *      "name": "이름",
-     *      "intro": "소개",
-     *      "followingNum": 1,
-     *      "followerNum": 1,
-     *      "feedNum": 0,
-     *      "feeds": {}
+     * "name": "이름",
+     * "intro": "소개",
+     * "followingNum": 1,
+     * "followerNum": 1,
+     * "feedNum": 0,
+     * "feeds": {}
      * }
      */
     @GetMapping("/{userId}")
@@ -42,6 +42,7 @@ public class UserController {
 
     /**
      * 유저 이름 검색 API
+     *
      * @param name:유저명
      * @return [ "유저 리스트" ]
      */
@@ -55,10 +56,10 @@ public class UserController {
      * 유저 수정 API
      * 요청----------
      * PATCH /users/1
-     *  {
-     *      "name": "바뀐이름",
-     *      "intro": "수정된 소개글"
-     *  }
+     * {
+     * "name": "바뀐이름",
+     * "intro": "수정된 소개글"
+     * }
      */
     @PatchMapping("/{userId}")
     public ResponseEntity<UserResponseDto> updateUser(
@@ -66,7 +67,7 @@ public class UserController {
             @Valid @RequestBody UserUpdateRequestDto userUpdateRequestDto
     ) {
         userService.updateUser(userId, userUpdateRequestDto);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -74,8 +75,8 @@ public class UserController {
      * 요청--------------
      * PATCH /users/1/password
      * {
-     *      "currentPassword": "현재 비밀번호"
-     *      "changedPassword": "수정된 비밀번호"
+     * "currentPassword": "현재 비밀번호"
+     * "changedPassword": "수정된 비밀번호"
      * }
      */
     @PatchMapping("/{userId}/password")
@@ -84,11 +85,12 @@ public class UserController {
             @Valid @RequestBody UserPasswordUpdateRequestDto userPasswordUpdateRequestDto
     ) {
         userService.updatePassword(userId, userPasswordUpdateRequestDto);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     /**
      * 유저 삭제 API
+     *
      * @param password:현재 비밀번호
      */
     @DeleteMapping
@@ -101,29 +103,23 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * 팔로우 생성 API
-     */
     @PostMapping("/follows/{followingId}")
     public ResponseEntity<Void> followUser(
             @PathVariable Long followingId,
-                          HttpSession session
+            HttpSession session
     ) {
         String followId = String.valueOf(session.getAttribute("userId"));
-        userService.followUser(Long.valueOf(followId),followingId);
+        userService.followUser(Long.valueOf(followId), followingId);
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * 팔로우 취소 API
-     */
     @DeleteMapping("/follows/{followingId}")
     public ResponseEntity<Void> unfollowUser(
             @PathVariable Long followingId,
-                          HttpSession session
+            HttpSession session
     ) {
         String followId = String.valueOf(session.getAttribute("userId"));
-        userService.unfollowUser(Long.valueOf(followId),followingId);
+        userService.unfollowUser(Long.valueOf(followId), followingId);
         return ResponseEntity.noContent().build();
     }
 
