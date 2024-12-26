@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface FollowRepository extends JpaRepository<FollowEntity, Long> {
+public interface FollowRepository extends JpaRepository<FollowEntity, FollowEntity.FollowId> {
     Optional<FollowEntity> findByFollowerAndFollowing(UserEntity follower, UserEntity following);
 
 }

@@ -3,7 +3,8 @@ package com.sparta.team7instagram.domain.user.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-// 팔로우 엔티티
+import java.io.Serializable;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -11,16 +12,33 @@ import lombok.*;
 @Builder
 @Table(name = "follows")
 public class FollowEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long followId;
 
+    @EmbeddedId
+    private FollowId id;
+    /**
+     * following = 내가 팔로우한 유저
+     * follower = 팔로우한 유저
+     */
     @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("following")
     @JoinColumn(name = "following_id", nullable = false)
-    private UserEntity following; // 내가 팔로우한 유저
+    private UserEntity following;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("follower")
     @JoinColumn(name = "follower_id", nullable = false)
-    private UserEntity follower; // 나를 팔로우한 유저
+    private UserEntity follower;
 
+    @Embeddable
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    @EqualsAndHashCode
+    public static class FollowId implements Serializable {
+        @Column(name = "following_id")
+        private Long following;
+        @Column(name = "follower_id")
+        private Long follower;
+    }
 }
