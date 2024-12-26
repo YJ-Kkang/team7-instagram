@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/feeds")
@@ -51,8 +50,7 @@ public class FeedController {
 
     @GetMapping("/{feedId}")
     public ResponseEntity<FeedReadResponseDto> readFeed(
-            @PathVariable final Long feedId,
-            @SessionAttribute(name = SessionUtil.SESSION_KEY) final Long loginUserId
+            @PathVariable final Long feedId
     ) {
         return ResponseEntity.ok(feedService.findFeed(feedId));
     }
