@@ -13,17 +13,21 @@ import java.time.LocalDateTime;
 @Getter
 public class CommentResponseDto {
 
+    private Long commentId;
     private String content;
-
-    private String nickname;
-
+    private Long userId;
+    private String name;
+    private Integer commentLikeCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public static CommentResponseDto toDto(UserEntity user, CommentEntity comment) {
+    public static CommentResponseDto toDto(CommentEntity comment) {
         return CommentResponseDto.builder()
+                .commentId(comment.getId())
                 .content(comment.getContent())
-                .nickname(user.getName())
+                .userId(comment.getUser().getId())
+                .name(comment.getUser().getName())
+                .commentLikeCount(comment.getCommentLikes().size())
                 .createdAt(comment.getCreatedAt())
                 .updatedAt(comment.getUpdatedAt())
                 .build();
