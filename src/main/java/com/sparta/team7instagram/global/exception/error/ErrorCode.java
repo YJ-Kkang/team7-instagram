@@ -14,6 +14,7 @@ public enum ErrorCode {
     // feed
     FEED_NOT_FOUND(HttpStatus.NOT_FOUND, "피드가 존재하지 않습니다"),
     FEED_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "피드에 유저의 좋아요가 존재하지 않습니다"),
+    CANNOT_LIKE_MY_FEED(HttpStatus.BAD_REQUEST, "본인의 피드에 좋아요를 누를 수 없습니다"),
 
     // comment
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글이 존재하지 않습니다"),

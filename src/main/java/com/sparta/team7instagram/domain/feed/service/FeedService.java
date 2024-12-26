@@ -7,6 +7,7 @@ import com.sparta.team7instagram.domain.feed.dto.response.FeedReadResponseDto;
 import com.sparta.team7instagram.domain.feed.entity.FeedEntity;
 import com.sparta.team7instagram.domain.feed.entity.FeedLikeEntity;
 import com.sparta.team7instagram.domain.feed.entity.FeedTagEntity;
+import com.sparta.team7instagram.domain.feed.exception.CannotLikeMyFeedException;
 import com.sparta.team7instagram.domain.feed.exception.FeedLikeNotFoundException;
 import com.sparta.team7instagram.domain.feed.exception.FeedNotFoundException;
 import com.sparta.team7instagram.domain.tag.entity.TagEntity;
@@ -39,7 +40,6 @@ public class FeedService {
 
     @Transactional
     public Long createFeed(FeedCreateRequestDto request, Long userId) {
-        // userService 사용 필요
         UserEntity user = userService.findById(userId);
         FeedEntity feed = request.toEntity(user);
 
@@ -85,7 +85,6 @@ public class FeedService {
 
     @Transactional
     public void updateFeed(Long feedId, FeedUpdateRequestDto request, Long userId) {
-        // 유저 필요
         UserEntity user = userService.findById(userId);
         FeedEntity feed = findFeedById(feedId);
 
@@ -111,7 +110,6 @@ public class FeedService {
 
     @Transactional
     public void deleteFeed(Long feedId, Long userId) {
-        // 유저 필요
         UserEntity user = userService.findById(userId);
         FeedEntity feed = findFeedById(feedId);
 
@@ -122,11 +120,10 @@ public class FeedService {
 
     @Transactional
     public void createFeedLike(Long feedId, Long userId) {
-        // 유저 필요
         UserEntity user = userService.findById(userId);
         FeedEntity feed = findFeedById(feedId);
 
-        authService.isSameUsers(feed.getUser().getId(), user.getId());
+        checkUserAuthentication(feed.getUser().getId(), user.getId());
 
         FeedLikeEntity feedLike = FeedLikeEntity.builder()
                 .feed(feed)
@@ -138,11 +135,10 @@ public class FeedService {
 
     @Transactional
     public void deleteFeedLike(Long feedId, Long userId) {
-        // 유저 필요
         UserEntity user = userService.findById(userId);
         FeedEntity feed = findFeedById(feedId);
 
-        authService.isSameUsers(feed.getUser().getId(), user.getId());
+        checkUserAuthentication(feed.getUser().getId(), user.getId());
 
         FeedLikeEntity feedLike = feed.getFeedLikes().stream()
                 .filter(like -> like.getUser().equals(user))
@@ -159,5 +155,11 @@ public class FeedService {
 
     private LocalDate dateFormatter(String date) {
         return date != null ? LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null;
+    }
+
+    private void checkUserAuthentication(Long userId, Long loginUserId) {
+        if (userId.equals(loginUserId)) {
+            throw new CannotLikeMyFeedException(ErrorCode.CANNOT_LIKE_MY_FEED);
+        }
     }
 }

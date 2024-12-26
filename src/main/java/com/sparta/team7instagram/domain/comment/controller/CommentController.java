@@ -4,7 +4,9 @@ import com.sparta.team7instagram.domain.comment.dto.request.CommentLikeRequestDt
 import com.sparta.team7instagram.domain.comment.dto.request.CommentRequestDto;
 import com.sparta.team7instagram.domain.comment.dto.response.CommentResponseDto;
 import com.sparta.team7instagram.domain.comment.service.CommentService;
+import com.sparta.team7instagram.global.util.SessionUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,39 +22,39 @@ public class CommentController {
 
     @PostMapping
     ResponseEntity<Void> createComment(
-            HttpServletRequest request,
+            HttpSession session,
             @RequestBody CommentRequestDto dto
     ){
-        Long userId = (Long) request.getSession().getAttribute("userId");
+        Long userId = SessionUtil.getSession(session);
 
         commentService.createComment(userId, dto);
 
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{feedId}")
+    @GetMapping
     public ResponseEntity<List<CommentResponseDto>> findAll(
-            @PathVariable Long feedId
+            @RequestParam Long feedId
     ){
         return ResponseEntity.ok(commentService.findAll(feedId));
     }
 
     @PatchMapping("/{commentId}")
     ResponseEntity<CommentResponseDto> updateComment(
-            HttpServletRequest request,
+            HttpSession session,
             @RequestBody CommentRequestDto dto,
             @PathVariable Long commentId
     ){
-        Long userId = (Long) request.getSession().getAttribute("userId");
+        Long userId = SessionUtil.getSession(session);
         return ResponseEntity.ok(commentService.updateComment(userId, dto, commentId));
     }
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> delete(
-            HttpServletRequest request,
+            HttpSession session,
             @PathVariable Long commentId
     ){
-        Long userId = (Long) request.getSession().getAttribute("userId");
+        Long userId = SessionUtil.getSession(session);
 
         commentService.delete(userId, commentId);
         return ResponseEntity.ok().build();
@@ -60,10 +62,10 @@ public class CommentController {
 
     @PostMapping("/likes")
     public ResponseEntity<Void> createLike(
-            HttpServletRequest request,
+            HttpSession session,
             @RequestBody CommentLikeRequestDto commentId
     ){
-        Long userId = (Long) request.getSession().getAttribute("userId");
+        Long userId = SessionUtil.getSession(session);
 
         commentService.createLike(commentId.getCommentId(), userId);
 
@@ -72,10 +74,10 @@ public class CommentController {
 
     @DeleteMapping("/likes")
     public ResponseEntity<Void> deleteLike(
-            HttpServletRequest request,
+            HttpSession session,
             @RequestParam Long commentLikeId
     ) {
-        Long userId = (Long) request.getSession().getAttribute("userId");
+        Long userId = SessionUtil.getSession(session);
 
         commentService.deleteLike(userId, commentLikeId);
 
