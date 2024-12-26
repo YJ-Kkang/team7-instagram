@@ -17,11 +17,11 @@ public class UserResponseDto {
     private int followingNum;
     private int followerNum;
     private int feedNum;
-    private List<String> feeds;
+    private List<Long> feeds;
 
     public static UserResponseDto from(UserEntity user) {
-        List<String> feedId = user.getFeeds().stream()
-                .map(FeedEntity::getContent)
+        List<Long> feedId = user.getFeeds().stream()
+                .map(FeedEntity::getId)
                 .collect(Collectors.toList());
         return UserResponseDto.builder()
                 .name(user.getName())
