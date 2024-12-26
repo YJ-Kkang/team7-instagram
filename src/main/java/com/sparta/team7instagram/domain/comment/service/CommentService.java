@@ -36,7 +36,7 @@ public class CommentService {
     private final CommentLikeRepository commentLikeRepository;
 
     @Transactional
-    public void createComment(Long userId, CommentRequestDto dto){
+    public void createComment(Long userId, CommentRequestDto dto) {
         UserEntity user = userRepository.findById(userId).orElseThrow(() -> new CustomRuntimeException(ErrorCode.USER_NOT_FOUND));
         FeedEntity feed = feedRepository.findById(dto.getFeedId()).orElseThrow(() -> new FeedNotFoundException(ErrorCode.FEED_NOT_FOUND));
         String content = dto.getContent();
@@ -46,16 +46,16 @@ public class CommentService {
         commentRepository.save(commentEntity);
     }
 
-    public List<CommentResponseDto> findAll(Long feedId){
+    public List<CommentResponseDto> findAll(Long feedId) {
         List<CommentEntity> comments = commentRepository.findByFeedId(feedId);
 
         return comments.stream()
-                .map(comment -> CommentResponseDto.toDto(comment.getUser(), comment))
+                .map(CommentResponseDto::toDto)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public CommentResponseDto updateComment(Long userId, CommentRequestDto dto, Long commentId){
+    public CommentResponseDto updateComment(Long userId, CommentRequestDto dto, Long commentId) {
         UserEntity user = userRepository.findById(userId).orElseThrow(() -> new CustomRuntimeException(ErrorCode.USER_NOT_FOUND));
 
         CommentEntity comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFound(ErrorCode.COMMENT_NOT_FOUND));
@@ -66,11 +66,11 @@ public class CommentService {
 
         comment.updateComment(dto.getContent());
 
-        return CommentResponseDto.toDto(user, comment);
+        return CommentResponseDto.toDto(comment);
     }
 
     @Transactional
-    public void delete(Long userId, Long commentId){
+    public void delete(Long userId, Long commentId) {
 
         userRepository.findById(userId).orElseThrow(() -> new CustomRuntimeException(ErrorCode.USER_NOT_FOUND));
 
@@ -107,7 +107,7 @@ public class CommentService {
         }
 
         UserEntity user = userRepository.findById(userId).orElseThrow(() -> new CustomRuntimeException(ErrorCode.USER_NOT_FOUND));
-        comment.getCommentLikes().add(new CommentLikeEntity(user,comment));
+        comment.getCommentLikes().add(new CommentLikeEntity(user, comment));
         commentRepository.save(comment);
     }
 

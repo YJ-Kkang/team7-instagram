@@ -3,6 +3,7 @@ package com.sparta.team7instagram.domain.user.controller;
 import com.sparta.team7instagram.domain.user.dto.request.UserPasswordUpdateRequestDto;
 import com.sparta.team7instagram.domain.user.dto.request.UserUpdateRequestDto;
 import com.sparta.team7instagram.domain.user.dto.response.UserResponseDto;
+import com.sparta.team7instagram.domain.user.dto.response.UserSearchResponseDto;
 import com.sparta.team7instagram.domain.user.service.UserService;
 import com.sparta.team7instagram.global.util.SessionUtil;
 import jakarta.servlet.http.HttpSession;
@@ -48,8 +49,8 @@ public class UserController {
      * @return [ "유저 리스트" ]
      */
     @GetMapping("/search")
-    public ResponseEntity<List<String>> searchUsersByName(@RequestParam String name) {
-        List<String> userNames = userService.searchUsersByName(name);
+    public ResponseEntity<List<UserSearchResponseDto>> searchUsersByName(@RequestParam String name) {
+        List<UserSearchResponseDto> userNames = userService.searchUsersByName(name);
         return ResponseEntity.ok(userNames);
     }
 

@@ -4,6 +4,7 @@ import com.sparta.team7instagram.domain.auth.exception.InvalidPasswordException;
 import com.sparta.team7instagram.domain.user.dto.request.UserPasswordUpdateRequestDto;
 import com.sparta.team7instagram.domain.user.dto.request.UserUpdateRequestDto;
 import com.sparta.team7instagram.domain.user.dto.response.UserResponseDto;
+import com.sparta.team7instagram.domain.user.dto.response.UserSearchResponseDto;
 import com.sparta.team7instagram.domain.user.entity.DeletedUserEntity;
 import com.sparta.team7instagram.domain.user.entity.FollowEntity;
 import com.sparta.team7instagram.domain.user.entity.UserEntity;
@@ -41,14 +42,14 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<String> searchUsersByName(
+    public List<UserSearchResponseDto> searchUsersByName(
             String name
     ) {
         List<UserEntity> users = userRepository.findByNameContaining(name);
 
         return users.stream()
-                .map(UserEntity::getName)
-                .collect(Collectors.toList());
+                .map(UserSearchResponseDto::from)
+                .toList();
     }
 
     @Transactional
