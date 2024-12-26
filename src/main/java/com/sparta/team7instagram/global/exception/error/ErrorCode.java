@@ -14,6 +14,8 @@ public enum ErrorCode {
     FEED_NOT_FOUND(HttpStatus.NOT_FOUND, "피드가 존재하지 않습니다"),
 
     // comment
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글이 존재하지 않습니다"),
+
     COMMENT_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "좋아요가 존재하지 않습니다"),
 
     DUPLICATE_COMMENT_LIKE(HttpStatus.CONFLICT, "좋아요를 중복으로 누를 수 없습니다"),
