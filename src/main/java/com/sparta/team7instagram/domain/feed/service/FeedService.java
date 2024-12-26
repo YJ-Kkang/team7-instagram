@@ -123,9 +123,7 @@ public class FeedService {
         UserEntity user = userService.findById(userId);
         FeedEntity feed = findFeedById(feedId);
 
-        if (authService.isSameUsers(feed.getUser().getId(), user.getId())) {
-            throw new CannotLikeMyFeedException(ErrorCode.CANNOT_LIKE_MY_FEED);
-        }
+        checkUserAuthentication(feed.getUser().getId(), user.getId());
 
         FeedLikeEntity feedLike = FeedLikeEntity.builder()
                 .feed(feed)
@@ -140,9 +138,7 @@ public class FeedService {
         UserEntity user = userService.findById(userId);
         FeedEntity feed = findFeedById(feedId);
 
-        if (authService.isSameUsers(feed.getUser().getId(), user.getId())) {
-            throw new CannotLikeMyFeedException(ErrorCode.CANNOT_LIKE_MY_FEED);
-        }
+        checkUserAuthentication(feed.getUser().getId(), user.getId());
 
         FeedLikeEntity feedLike = feed.getFeedLikes().stream()
                 .filter(like -> like.getUser().equals(user))
@@ -159,5 +155,11 @@ public class FeedService {
 
     private LocalDate dateFormatter(String date) {
         return date != null ? LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null;
+    }
+
+    private void checkUserAuthentication(Long userId, Long loginUserId) {
+        if (userId.equals(loginUserId)) {
+            throw new CannotLikeMyFeedException(ErrorCode.CANNOT_LIKE_MY_FEED);
+        }
     }
 }
