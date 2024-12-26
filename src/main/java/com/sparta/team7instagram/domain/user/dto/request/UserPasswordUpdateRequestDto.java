@@ -10,7 +10,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor (access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserPasswordUpdateRequestDto {
     @Pattern(
             regexp = UserValidationMessages.PASWORD_REGEXP,

@@ -11,7 +11,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor (access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserUpdateRequestDto {
     @Pattern(
             regexp = UserValidationMessages.NAME_REGEXP,
