@@ -25,13 +25,14 @@ public class AuthController {
 
     /**
      * signup
+     *
      * @param requestDto SignupUserRequestDto
      * @return 201 Created(uri)
      */
     @PostMapping("/signup")
     public ResponseEntity<Void> saveUser(
             @Valid @RequestBody final SignupUserRequestDto requestDto
-    ){
+    ) {
         final Long userId = authService.saveUser(requestDto);
 
         final URI uri = UriComponentsBuilder.fromPath("/users/{userId}")
@@ -43,15 +44,16 @@ public class AuthController {
 
     /**
      * login
+     *
      * @param requestDto LoginUserRequestDto
-     * @param request HttpServletRequest
+     * @param request    HttpServletRequest
      * @return 200 Ok
      */
     @PostMapping("/login")
     public ResponseEntity<Void> login(
             @Valid @RequestBody final LoginUserRequestDto requestDto,
             HttpServletRequest request
-    ){
+    ) {
         authService.login(requestDto, request);
 
         return ResponseEntity.ok().build();
@@ -59,13 +61,14 @@ public class AuthController {
 
     /**
      * logout
+     *
      * @param session HttpSession
      * @return 204 NoContent
      */
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(
             HttpSession session
-    ){
+    ) {
         removeSession(session);
         return ResponseEntity.noContent().build();
     }
