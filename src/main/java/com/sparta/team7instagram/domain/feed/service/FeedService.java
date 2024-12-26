@@ -7,13 +7,14 @@ import com.sparta.team7instagram.domain.feed.dto.response.FeedReadResponseDto;
 import com.sparta.team7instagram.domain.feed.entity.FeedEntity;
 import com.sparta.team7instagram.domain.feed.entity.FeedLikeEntity;
 import com.sparta.team7instagram.domain.feed.entity.FeedTagEntity;
+import com.sparta.team7instagram.domain.feed.exception.FeedLikeNotFoundException;
 import com.sparta.team7instagram.domain.feed.exception.FeedNotFoundException;
 import com.sparta.team7instagram.domain.tag.entity.TagEntity;
 import com.sparta.team7instagram.domain.feed.repository.FeedRepository;
 import com.sparta.team7instagram.domain.tag.service.TagService;
 import com.sparta.team7instagram.domain.user.entity.UserEntity;
 import com.sparta.team7instagram.domain.user.repository.FollowRepository;
-import com.sparta.team7instagram.domain.user.repository.UserRepository;
+import com.sparta.team7instagram.domain.user.service.UserService;
 import com.sparta.team7instagram.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,14 +33,14 @@ public class FeedService {
 
     private final TagService tagService;
     private final AuthService authService;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final FeedRepository feedRepository;
     private final FollowRepository followRepository;
 
     @Transactional
     public Long createFeed(FeedCreateRequestDto request, Long userId) {
         // userService 사용 필요
-        UserEntity user = userRepository.findById(userId).get();
+        UserEntity user = userService.findById(userId);
         FeedEntity feed = request.toEntity(user);
 
         for (String tagName : request.tags()) {
@@ -85,7 +86,7 @@ public class FeedService {
     @Transactional
     public void updateFeed(Long feedId, FeedUpdateRequestDto request, Long userId) {
         // 유저 필요
-        UserEntity user = userRepository.findById(userId).get();
+        UserEntity user = userService.findById(userId);
         FeedEntity feed = findFeedById(feedId);
 
         authService.isSameUsers(feed.getUser().getId(), user.getId());
@@ -111,7 +112,7 @@ public class FeedService {
     @Transactional
     public void deleteFeed(Long feedId, Long userId) {
         // 유저 필요
-        UserEntity user = userRepository.findById(userId).get();
+        UserEntity user = userService.findById(userId);
         FeedEntity feed = findFeedById(feedId);
 
         authService.isSameUsers(feed.getUser().getId(), user.getId());
@@ -122,7 +123,7 @@ public class FeedService {
     @Transactional
     public void createFeedLike(Long feedId, Long userId) {
         // 유저 필요
-        UserEntity user = userRepository.findById(userId).get();
+        UserEntity user = userService.findById(userId);
         FeedEntity feed = findFeedById(feedId);
 
         authService.isSameUsers(feed.getUser().getId(), user.getId());
@@ -138,7 +139,7 @@ public class FeedService {
     @Transactional
     public void deleteFeedLike(Long feedId, Long userId) {
         // 유저 필요
-        UserEntity user = userRepository.findById(userId).get();
+        UserEntity user = userService.findById(userId);
         FeedEntity feed = findFeedById(feedId);
 
         authService.isSameUsers(feed.getUser().getId(), user.getId());
@@ -146,7 +147,7 @@ public class FeedService {
         FeedLikeEntity feedLike = feed.getFeedLikes().stream()
                 .filter(like -> like.getUser().equals(user))
                 .findFirst()
-                .orElseThrow(() -> new FeedNotFoundException(ErrorCode.FEED_LIKE_NOT_FOUND));
+                .orElseThrow(() -> new FeedLikeNotFoundException(ErrorCode.FEED_LIKE_NOT_FOUND));
 
         feed.removeFeedLike(feedLike);
     }
