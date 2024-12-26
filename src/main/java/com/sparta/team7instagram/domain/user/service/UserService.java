@@ -1,5 +1,6 @@
 package com.sparta.team7instagram.domain.user.service;
 
+import com.sparta.team7instagram.domain.auth.exception.InvalidPasswordException;
 import com.sparta.team7instagram.domain.user.dto.request.UserPasswordUpdateRequestDto;
 import com.sparta.team7instagram.domain.user.dto.request.UserUpdateRequestDto;
 import com.sparta.team7instagram.domain.user.dto.response.UserResponseDto;
@@ -7,9 +8,12 @@ import com.sparta.team7instagram.domain.user.entity.DeletedUserEntity;
 import com.sparta.team7instagram.domain.user.entity.FollowEntity;
 import com.sparta.team7instagram.domain.user.entity.UserEntity;
 import com.sparta.team7instagram.domain.auth.config.PasswordEncoder;
+import com.sparta.team7instagram.domain.user.exception.InvalidFollowException;
+import com.sparta.team7instagram.domain.user.exception.UserNotExistingException;
 import com.sparta.team7instagram.domain.user.repository.DeletedUserRepository;
 import com.sparta.team7instagram.domain.user.repository.FollowRepository;
 import com.sparta.team7instagram.domain.user.repository.UserRepository;
+import com.sparta.team7instagram.global.exception.error.ErrorCode;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -63,10 +67,10 @@ public class UserService {
     ) {
         UserEntity user = findById(userId);
         if (!passwordEncoder.matches(userPasswordUpdateRequestDto.getCurrentPassword(), user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "현재 비밀번호가 일치하지 않습니다.");
+            throw new InvalidPasswordException(ErrorCode.INVALID_PASSWORD);
         }
         if (passwordEncoder.matches(userPasswordUpdateRequestDto.getChangedPassword(), user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "현재 비밀번호와 동일한 비밀번호로 변경할 수 없습니다.");
+            throw new InvalidPasswordException(ErrorCode.SAME_PASSWORD);
         }
 
         String encodedPassword = passwordEncoder.encode(userPasswordUpdateRequestDto.getChangedPassword());
@@ -82,7 +86,7 @@ public class UserService {
         UserEntity user = findById(userId);
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
+            throw new InvalidPasswordException(ErrorCode.INVALID_PASSWORD);
         }
 
         DeletedUserEntity deletedUser = new DeletedUserEntity(user.getEmail());
@@ -100,10 +104,10 @@ public class UserService {
         UserEntity follower = findById(followerId);
         UserEntity following = findById(followingId);
         if (followerId.equals(followingId)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "자기 자신을 팔로우할 수 없습니다.");
+            throw new InvalidFollowException(ErrorCode.NOT_SELF_FOLLOW);
         }
         if (followRepository.findByFollowerAndFollowing(follower, following).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 팔로우 상태입니다.");
+            throw new InvalidFollowException(ErrorCode.EXISTING_FOLLOW);
         }
         FollowEntity.FollowId followId = new FollowEntity.FollowId(followingId, followerId);
 
@@ -122,7 +126,7 @@ public class UserService {
         UserEntity follower = findById(followerId);
         UserEntity following = findById(followingId);
         FollowEntity follow = followRepository.findByFollowerAndFollowing(follower, following)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 팔로우 상태가 아닙니다."));
+                .orElseThrow(() -> new InvalidFollowException(ErrorCode.NOT_FOLLOWING));
 
         followRepository.delete(follow);
     }
@@ -130,6 +134,6 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserEntity findById(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new UserNotExistingException(ErrorCode.USER_NOT_FOUND));
     }
 }
