@@ -76,7 +76,7 @@ public class CommentService {
 
         CommentEntity comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFound(ErrorCode.COMMENT_NOT_FOUND));
 
-        if (!comment.getUser().getId().equals(userId) || !comment.getFeed().getUser().getId().equals(userId)) {
+        if (!comment.getUser().getId().equals(userId) && !comment.getFeed().getUser().getId().equals(userId)) {
             throw new UnauthorizedException(ErrorCode.UNAUTHORIZED);
         }
 
@@ -93,14 +93,8 @@ public class CommentService {
             throw new SelfCommentLikeNotAllowedException(ErrorCode.SELF_COMMENT_LIKE_NOT_ALLOWED);
         }
 
-        System.out.println(comment.getUser().getId());
-        System.out.println(userId);
-
         boolean isDuplicate = comment.getCommentLikes().stream()
                 .anyMatch(commentLikeEntity -> commentLikeEntity.getUser().getId().equals(userId));
-
-        System.out.println(isDuplicate);
-        System.out.println("콘솔 로그 확인용");
 
         if (isDuplicate) {
             throw new DuplicateCommentLike(ErrorCode.DUPLICATE_COMMENT_LIKE);
