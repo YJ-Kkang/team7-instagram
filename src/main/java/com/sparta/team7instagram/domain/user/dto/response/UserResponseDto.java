@@ -20,7 +20,7 @@ public class UserResponseDto {
     private List<String> feeds;
 
     public static UserResponseDto from(UserEntity user) {
-        List<String> feedTitles = user.getFeeds().stream()
+        List<String> feedId = user.getFeeds().stream()
                 .map(FeedEntity::getContent)
                 .collect(Collectors.toList());
         return UserResponseDto.builder()
@@ -29,7 +29,7 @@ public class UserResponseDto {
                 .followingNum(user.getFollowing().size())
                 .followerNum(user.getFollower().size())
                 .feedNum(user.getFeeds().size())
-                .feeds(feedTitles)
+                .feeds(feedId)
                 .build();
     }
 
