@@ -2,6 +2,7 @@ package com.sparta.team7instagram.domain.comment.service;
 
 import com.sparta.team7instagram.domain.comment.entity.CommentLikeEntity;
 import com.sparta.team7instagram.domain.comment.exception.CommentLikeNotFoundException;
+import com.sparta.team7instagram.domain.comment.exception.CommentNotFound;
 import com.sparta.team7instagram.domain.comment.exception.DuplicateCommentLike;
 import com.sparta.team7instagram.domain.comment.exception.SelfCommentLikeNotAllowedException;
 import com.sparta.team7instagram.domain.comment.repository.CommentLikeRepository;
@@ -17,7 +18,6 @@ import com.sparta.team7instagram.domain.user.entity.UserEntity;
 import com.sparta.team7instagram.global.exception.CustomRuntimeException;
 import com.sparta.team7instagram.global.exception.UnauthorizedException;
 import com.sparta.team7instagram.global.exception.error.ErrorCode;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -59,15 +58,15 @@ public class CommentService {
     public CommentResponseDto updateComment(Long userId, CommentRequestDto dto, Long commentId){
         UserEntity user = userRepository.findById(userId).orElseThrow(() -> new CustomRuntimeException(ErrorCode.USER_NOT_FOUND));
 
-        CommentEntity commentEntity = commentRepository.findByIdOrElseThrow(commentId);
+        CommentEntity comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFound(ErrorCode.COMMENT_NOT_FOUND));
 
-        if (!commentEntity.getUser().getId().equals(userId) || !commentEntity.getFeed().getUser().getId().equals(userId)) {
+        if (!comment.getUser().getId().equals(userId) || !comment.getFeed().getUser().getId().equals(userId)) {
             throw new UnauthorizedException(ErrorCode.UNAUTHORIZED);
         }
 
-        commentEntity.updateComment(dto.getContent());
+        comment.updateComment(dto.getContent());
 
-        return CommentResponseDto.toDto(user, commentEntity);
+        return CommentResponseDto.toDto(user, comment);
     }
 
     @Transactional
@@ -75,19 +74,20 @@ public class CommentService {
 
         userRepository.findById(userId).orElseThrow(() -> new CustomRuntimeException(ErrorCode.USER_NOT_FOUND));
 
-        CommentEntity commentEntity = commentRepository.findByIdOrElseThrow(commentId);
+        CommentEntity comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFound(ErrorCode.COMMENT_NOT_FOUND));
 
-        if (!commentEntity.getUser().getId().equals(userId) || !commentEntity.getFeed().getUser().getId().equals(userId)) {
+        if (!comment.getUser().getId().equals(userId) || !comment.getFeed().getUser().getId().equals(userId)) {
             throw new UnauthorizedException(ErrorCode.UNAUTHORIZED);
         }
 
-        commentRepository.delete(commentEntity);
+        commentRepository.delete(comment);
     }
 
     @Transactional
     public void createLike(Long commentId, Long userId) {
 
-        CommentEntity comment = commentRepository.findByIdOrElseThrow(commentId);
+        CommentEntity comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFound(ErrorCode.COMMENT_NOT_FOUND));
+
 
         if (comment.getUser().getId().equals(userId)) {
             throw new SelfCommentLikeNotAllowedException(ErrorCode.SELF_COMMENT_LIKE_NOT_ALLOWED);
