@@ -10,7 +10,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor (access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserUpdateRequestDto {
     @Pattern(
             regexp = "^[가-힣]{1,4}$",

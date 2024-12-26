@@ -4,6 +4,7 @@ import com.sparta.team7instagram.domain.user.dto.request.UserPasswordUpdateReque
 import com.sparta.team7instagram.domain.user.dto.request.UserUpdateRequestDto;
 import com.sparta.team7instagram.domain.user.dto.response.UserResponseDto;
 import com.sparta.team7instagram.domain.user.service.UserService;
+import com.sparta.team7instagram.global.util.SessionUtil;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -96,10 +97,10 @@ public class UserController {
     @DeleteMapping
     public ResponseEntity<Void> deleteUser(
             HttpSession session,
-            @RequestParam String password // 요청에 비밀번호 추가
+            @RequestParam String password
     ) {
-        String userId = String.valueOf(session.getAttribute("userId"));
-        userService.deleteUser(Long.valueOf(userId), password, session);
+        Long userId = SessionUtil.getSession(session);
+        userService.deleteUser(userId, password, session);
         return ResponseEntity.noContent().build();
     }
 
@@ -108,8 +109,8 @@ public class UserController {
             @PathVariable Long followingId,
             HttpSession session
     ) {
-        String followId = String.valueOf(session.getAttribute("userId"));
-        userService.followUser(Long.valueOf(followId), followingId);
+        Long followId = SessionUtil.getSession(session);
+        userService.followUser(followId, followingId);
         return ResponseEntity.noContent().build();
     }
 
@@ -118,8 +119,8 @@ public class UserController {
             @PathVariable Long followingId,
             HttpSession session
     ) {
-        String followId = String.valueOf(session.getAttribute("userId"));
-        userService.unfollowUser(Long.valueOf(followId), followingId);
+        Long followId = SessionUtil.getSession(session);
+        userService.unfollowUser(followId, followingId);
         return ResponseEntity.noContent().build();
     }
 
