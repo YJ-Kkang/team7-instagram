@@ -1,9 +1,11 @@
 package com.sparta.team7instagram.domain.auth.service;
 
 import com.sparta.team7instagram.domain.auth.config.PasswordEncoder;
-import com.sparta.team7instagram.domain.auth.dto.LoginUserRequestDto;
-import com.sparta.team7instagram.domain.auth.dto.SignupUserRequestDto;
+
+import com.sparta.team7instagram.domain.auth.dto.requestDto.LoginUserRequestDto;
+import com.sparta.team7instagram.domain.auth.dto.requestDto.SignupUserRequestDto;
 import com.sparta.team7instagram.domain.auth.exception.*;
+
 import com.sparta.team7instagram.domain.user.entity.UserEntity;
 import com.sparta.team7instagram.domain.user.repository.DeletedUserRepository;
 import com.sparta.team7instagram.domain.user.repository.UserRepository;
