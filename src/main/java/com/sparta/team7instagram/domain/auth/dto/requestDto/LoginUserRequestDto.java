@@ -1,13 +1,15 @@
 package com.sparta.team7instagram.domain.auth.dto.requestDto;
 
 import com.sparta.team7instagram.domain.auth.dto.UserValidationMessages;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
 public record LoginUserRequestDto (
     @NotBlank(message = UserValidationMessages.EMAIL_REQUIRED)
-    @Email(message = UserValidationMessages.EMAIL_INVALID)
+    @Pattern(
+            regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]$",
+            message = UserValidationMessages.EMAIL_INVALID
+    )
     String email,
 
     @NotBlank(message = UserValidationMessages.PASSWORD_REQUIRED)

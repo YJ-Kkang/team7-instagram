@@ -49,7 +49,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<Void> login(
-            @RequestBody final LoginUserRequestDto requestDto,
+            @Valid @RequestBody final LoginUserRequestDto requestDto,
             HttpServletRequest request
     ){
         authService.login(requestDto, request);
