@@ -1,11 +1,11 @@
-package com.sparta.team7instagram.domain.auth.dto;
+package com.sparta.team7instagram.domain.auth.dto.requestDto;
 
-import com.sparta.team7instagram.domain.auth.common.UserValidationMessages;
+import com.sparta.team7instagram.domain.auth.dto.UserValidationMessages;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
-public record SignupUserRequestDto (
+public record LoginUserRequestDto (
     @NotBlank(message = UserValidationMessages.EMAIL_REQUIRED)
     @Email(message = UserValidationMessages.EMAIL_INVALID)
     String email,
@@ -15,13 +15,6 @@ public record SignupUserRequestDto (
             regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
             message = UserValidationMessages.PASSWORD_INVALID
     )
-    String password,
-
-    @NotBlank(message = UserValidationMessages.NAME_REQUIRED)
-    @Pattern(
-            regexp = "^[가-힣]{1,4}$",
-            message = UserValidationMessages.NAME_INVALID
-    )
-    String name
+    String password
     ){
 }

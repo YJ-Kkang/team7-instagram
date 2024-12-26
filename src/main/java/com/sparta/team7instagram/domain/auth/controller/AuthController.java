@@ -1,7 +1,7 @@
 package com.sparta.team7instagram.domain.auth.controller;
 
-import com.sparta.team7instagram.domain.auth.dto.LoginUserRequestDto;
-import com.sparta.team7instagram.domain.auth.dto.SignupUserRequestDto;
+import com.sparta.team7instagram.domain.auth.dto.requestDto.LoginUserRequestDto;
+import com.sparta.team7instagram.domain.auth.dto.requestDto.SignupUserRequestDto;
 import com.sparta.team7instagram.domain.auth.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;

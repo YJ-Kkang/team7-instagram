@@ -1,4 +1,4 @@
-package com.sparta.team7instagram.domain.auth.common;
+package com.sparta.team7instagram.domain.auth.dto;
 
 public class UserValidationMessages {
 

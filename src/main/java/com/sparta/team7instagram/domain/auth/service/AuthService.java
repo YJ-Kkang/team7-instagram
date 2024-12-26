@@ -1,8 +1,8 @@
 package com.sparta.team7instagram.domain.auth.service;
 
 import com.sparta.team7instagram.domain.auth.config.PasswordEncoder;
-import com.sparta.team7instagram.domain.auth.dto.LoginUserRequestDto;
-import com.sparta.team7instagram.domain.auth.dto.SignupUserRequestDto;
+import com.sparta.team7instagram.domain.auth.dto.requestDto.LoginUserRequestDto;
+import com.sparta.team7instagram.domain.auth.dto.requestDto.SignupUserRequestDto;
 import com.sparta.team7instagram.domain.auth.exception.DifferentUserException;
 import com.sparta.team7instagram.domain.auth.exception.EmailNotFoundException;
 import com.sparta.team7instagram.domain.auth.exception.ExistingEmailException;
