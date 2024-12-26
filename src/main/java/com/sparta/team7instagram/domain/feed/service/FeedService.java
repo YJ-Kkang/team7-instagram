@@ -35,7 +35,6 @@ public class FeedService {
     private final AuthService authService;
     private final UserRepository userRepository;
     private final FeedRepository feedRepository;
-    private final FeedLikeRepository feedLikeRepository;
     private final FollowRepository followRepository;
 
     @Transactional
@@ -92,7 +91,7 @@ public class FeedService {
 
         authService.isSameUsers(feed.getUser().getId(), user.getId());
 
-        if (!request.tags().isEmpty()) {
+        if (request.tags() != null) {
             feed.removeAllFeedTag();
 
             for (String tagName : request.tags()) {
@@ -106,6 +105,8 @@ public class FeedService {
                 feed.addFeedTag(feedTag);
             }
         }
+
+        feed.updateContent(request.content());
     }
 
     @Transactional
@@ -143,13 +144,12 @@ public class FeedService {
 
         authService.isSameUsers(feed.getUser().getId(), user.getId());
 
-        FeedLikeEntity feedLike = FeedLikeEntity.builder()
-                .feed(feed)
-                .user(user)
-                .build();
+        FeedLikeEntity feedLike = feed.getFeedLikes().stream()
+                .filter(like -> like.getUser().equals(user))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("FeedLike not found"));
 
         feed.removeFeedLike(feedLike);
-        feedLikeRepository.delete(feedLike);
     }
 
     private FeedEntity findFeedById(Long feedId) {

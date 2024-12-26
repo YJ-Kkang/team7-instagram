@@ -27,10 +27,10 @@ public class FeedLikeEntity {
     private FeedEntity feed;
 
     @Builder
-    public FeedLikeEntity(FeedLikeId id, UserEntity user, FeedEntity feed) {
-        this.id = id;
+    public FeedLikeEntity(UserEntity user, FeedEntity feed) {
         this.user = user;
         this.feed = feed;
+        this.id = FeedLikeId.builder().userId(user.getId()).feedId(feed.getId()).build();
     }
 
     public void setFeed(FeedEntity feed) {
