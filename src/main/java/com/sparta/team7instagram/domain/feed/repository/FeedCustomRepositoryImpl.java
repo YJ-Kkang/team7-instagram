@@ -71,7 +71,6 @@ public class FeedCustomRepositoryImpl implements FeedCustomRepository {
                 )
                 .from(feedEntity)
                 .leftJoin(feedEntity.user, userEntity)
-                .leftJoin(feedEntity.feedLikes, feedLikeEntity)
                 .leftJoin(feedEntity.feedTags, feedTagEntity)
                 .leftJoin(feedTagEntity.tag, tagEntity)
                 .where(builder)
@@ -102,7 +101,6 @@ public class FeedCustomRepositoryImpl implements FeedCustomRepository {
                         .leftJoin(feedTagEntity.tag, tagEntity)
                         .where(builder)
                         .orderBy(orderSpecifier)
-                        .groupBy(feedEntity.id, tagEntity.id)
                         .fetchOne())
                 .orElse(0L);
 
