@@ -13,14 +13,14 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserPasswordUpdateRequestDto {
     @Pattern(
-            regexp = UserValidationMessages.PASWORD_REGEXP,
+            regexp = UserValidationMessages.PASSWORD_REGEXP,
             message = UserValidationMessages.PASSWORD_INVALID
     )
     @NotBlank
     private String currentPassword;
 
     @Pattern(
-            regexp = UserValidationMessages.PASWORD_REGEXP,
+            regexp = UserValidationMessages.PASSWORD_REGEXP,
             message = UserValidationMessages.PASSWORD_INVALID
     )
     @NotBlank

@@ -14,7 +14,7 @@ public record LoginUserRequestDto(
 
         @NotBlank(message = UserValidationMessages.PASSWORD_REQUIRED)
         @Pattern(
-                regexp = UserValidationMessages.PASWORD_REGEXP,
+                regexp = UserValidationMessages.PASSWORD_REGEXP,
                 message = UserValidationMessages.PASSWORD_INVALID
         )
         String password

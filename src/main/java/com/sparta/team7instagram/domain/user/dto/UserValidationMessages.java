@@ -19,6 +19,6 @@ public class UserValidationMessages {
 
     // 정규 표현식
     public static final String EMAIL_REGEXP = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]$";
-    public static final String PASWORD_REGEXP = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+    public static final String PASSWORD_REGEXP = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
     public static final String NAME_REGEXP = "^[가-힣]{1,4}$";
 }
