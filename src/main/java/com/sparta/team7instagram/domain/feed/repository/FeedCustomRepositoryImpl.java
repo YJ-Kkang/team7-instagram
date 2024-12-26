@@ -55,49 +55,6 @@ public class FeedCustomRepositoryImpl implements FeedCustomRepository {
             orderSpecifier = new OrderSpecifier[]{feedEntity.feedLikes.size().desc(), feedEntity.updatedAt.desc()};
         }
 
-//        List<FeedReadResponseDto> feedReadRes = queryFactory.selectFrom(feedEntity)
-//                .leftJoin(feedEntity.user, userEntity)
-//                .leftJoin(feedEntity.feedLikes, feedLikeEntity)
-//                .leftJoin(feedEntity.feedTags, feedTagEntity)
-//                .leftJoin(feedTagEntity.tag, tagEntity)
-//                .where(builder)
-//                .orderBy(orderSpecifier)
-//                .groupBy(feedEntity.id, tagEntity.id)
-//                .offset(pageable.getOffset())
-//                .limit(pageable.getPageSize())
-//                .fetch()
-//                .stream()
-//                .map(FeedReadResponseDto::from).toList();
-
-
-//        List<FeedReadResponseDto> feedReadRes = queryFactory.select(
-//                        Projections.constructor(
-//                                FeedReadResponseDto.class,
-//                                feedEntity.id,
-//                                feedEntity.content,
-//                                Projections.list(
-//                                        Projections.constructor(
-//                                                TagResponseDto.class,
-//                                                tagEntity.id,
-//                                                tagEntity.name)
-//                                ),
-//                                feedEntity.user.name,
-//                                feedEntity.feedLikes.size(),
-//                                feedEntity.createdAt,
-//                                feedEntity.updatedAt
-//                        )
-//                )
-//                .from(feedEntity)
-//                .leftJoin(feedEntity.user, userEntity)
-//                .leftJoin(feedEntity.feedLikes, feedLikeEntity)
-//                .leftJoin(feedTagEntity.tag, tagEntity)
-//                .where(builder)
-//                .orderBy(feedEntity.updatedAt.desc())
-//                .groupBy(feedEntity.id)
-//                .offset(pageable.getOffset())
-//                .limit(pageable.getPageSize())
-//                .fetch();
-
         List<FeedReadResponseDtoConvert> feedReadRaw = queryFactory.select(
                         Projections.constructor(
                                 FeedReadResponseDtoConvert.class,
