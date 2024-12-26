@@ -9,7 +9,6 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpMethod;
 import org.springframework.util.PatternMatchUtils;
 
 import java.io.IOException;
@@ -37,7 +36,7 @@ public class LoginFilter implements Filter {
         // 로그인을 체크 해야하는 URL인지 검사
         // whiteListURL에 포함된 경우 true 반환 -> !true = false
         try {
-            if (!isWhiteList(requestURI) && !HttpMethod.GET.matches(httpRequest.getMethod())) {
+            if (!isWhiteList(requestURI)) {
                 SessionUtil.validateSession(httpRequest.getSession(false));
             }
         } catch (UnauthorizedException e) {
