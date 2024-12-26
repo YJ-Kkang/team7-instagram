@@ -1,10 +1,7 @@
 package com.sparta.team7instagram.domain.feed.entity;
 
 import jakarta.persistence.Embeddable;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -16,4 +13,10 @@ public class FeedTagId implements Serializable {
 
     private Long feedId;
     private Long tagId;
+
+    @Builder
+    public FeedTagId(Long feedId, Long tagId) {
+        this.feedId = feedId;
+        this.tagId = tagId;
+    }
 }

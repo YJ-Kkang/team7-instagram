@@ -4,6 +4,7 @@ import com.sparta.team7instagram.domain.feed.dto.request.FeedCreateRequestDto;
 import com.sparta.team7instagram.domain.feed.dto.request.FeedUpdateRequestDto;
 import com.sparta.team7instagram.domain.feed.dto.response.FeedReadResponseDto;
 import com.sparta.team7instagram.domain.feed.service.FeedService;
+import com.sparta.team7instagram.global.util.SessionUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/feeds")
@@ -24,9 +26,9 @@ public class FeedController {
     @PostMapping
     public ResponseEntity<Void> createFeed(
             @RequestBody @Valid final FeedCreateRequestDto request,
-            Long userId
+            @SessionAttribute(name = SessionUtil.SESSION_KEY) final Long loginUserId
     ) {
-        final Long feedId = feedService.createFeed(request, userId);
+        final Long feedId = feedService.createFeed(request, loginUserId);
 
         final URI uri = UriComponentsBuilder.fromPath("/feeds/{feedId}")
                 .buildAndExpand(feedId)
@@ -37,16 +39,20 @@ public class FeedController {
 
     @GetMapping
     public ResponseEntity<Page<FeedReadResponseDto>> readFeeds(
-            @RequestParam(required = false) final String tagName,
+            @RequestParam(required = false) final String searchTag,
+            @RequestParam(required = false) final String sort,
+            @RequestParam(required = false) final String startDate,
+            @RequestParam(required = false) final String endDate,
             Pageable pageable,
-            Long userId
+            @SessionAttribute(name = SessionUtil.SESSION_KEY) final Long loginUserId
     ) {
-        return ResponseEntity.ok(feedService.findAllFeedByConditions(tagName, pageable, userId));
+        return ResponseEntity.ok(feedService.findAllFeedByConditions(searchTag, sort, startDate, endDate, pageable, loginUserId));
     }
 
     @GetMapping("/{feedId}")
     public ResponseEntity<FeedReadResponseDto> readFeed(
-            @PathVariable final Long feedId
+            @PathVariable final Long feedId,
+            @SessionAttribute(name = SessionUtil.SESSION_KEY) final Long loginUserId
     ) {
         return ResponseEntity.ok(feedService.findFeed(feedId));
     }
@@ -55,9 +61,9 @@ public class FeedController {
     public ResponseEntity<Void> updateFeed(
             @PathVariable final Long feedId,
             @RequestBody final FeedUpdateRequestDto request,
-            final Long userId
+            @SessionAttribute(name = SessionUtil.SESSION_KEY) final Long loginUserId
     ) {
-        feedService.updateFeed(feedId, request, userId);
+        feedService.updateFeed(feedId, request, loginUserId);
 
         return ResponseEntity.ok().build();
     }
@@ -65,9 +71,9 @@ public class FeedController {
     @DeleteMapping("/{feedId}")
     public ResponseEntity<FeedReadResponseDto> deleteFeed(
             @PathVariable final Long feedId,
-            final Long userId
+            @SessionAttribute(name = SessionUtil.SESSION_KEY) final Long loginUserId
     ) {
-        feedService.deleteFeed(feedId, userId);
+        feedService.deleteFeed(feedId, loginUserId);
 
         return ResponseEntity.noContent().build();
     }
@@ -75,9 +81,9 @@ public class FeedController {
     @PostMapping("/{feedId}/likes")
     public ResponseEntity<Void> createFeedLike(
             @PathVariable final Long feedId,
-            Long userId
+            @SessionAttribute(name = SessionUtil.SESSION_KEY) final Long loginUserId
     ) {
-        feedService.createFeedLike(feedId, userId);
+        feedService.createFeedLike(feedId, loginUserId);
 
         return ResponseEntity.ok().build();
     }
@@ -85,9 +91,9 @@ public class FeedController {
     @DeleteMapping("/{feedId}/likes")
     public ResponseEntity<Void> deleteFeedLike(
             @PathVariable final Long feedId,
-            Long userId
+            @SessionAttribute(name = SessionUtil.SESSION_KEY) final Long loginUserId
     ) {
-        feedService.deleteFeedLike(feedId, userId);
+        feedService.deleteFeedLike(feedId, loginUserId);
 
         return ResponseEntity.ok().build();
     }
