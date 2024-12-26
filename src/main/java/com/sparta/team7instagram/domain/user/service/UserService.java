@@ -3,23 +3,19 @@ package com.sparta.team7instagram.domain.user.service;
 import com.sparta.team7instagram.domain.user.dto.request.UserPasswordUpdateRequestDto;
 import com.sparta.team7instagram.domain.user.dto.request.UserUpdateRequestDto;
 import com.sparta.team7instagram.domain.user.dto.response.UserResponseDto;
+import com.sparta.team7instagram.domain.user.entity.DeletedUserEntity;
 import com.sparta.team7instagram.domain.user.entity.FollowEntity;
 import com.sparta.team7instagram.domain.user.entity.UserEntity;
 import com.sparta.team7instagram.domain.auth.config.PasswordEncoder;
-import com.sparta.team7instagram.domain.auth.dto.LoginUserRequestDto;
-import com.sparta.team7instagram.domain.auth.dto.SignupUserRequestDto;
+import com.sparta.team7instagram.domain.user.repository.DeletedUserRepository;
 import com.sparta.team7instagram.domain.user.repository.FollowRepository;
 import com.sparta.team7instagram.domain.user.repository.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -30,37 +26,7 @@ public class UserService {
     private final FollowRepository followRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public void saveUser(
-            SignupUserRequestDto requestDto
-    ) {
-        Optional<UserEntity> findUser = userRepository.findByEmail(requestDto.getEmail());
-
-        if (findUser.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다.");
-        }
-        String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
-        UserEntity userEntity = new UserEntity(
-                requestDto.getEmail(),
-                encodedPassword,
-                requestDto.getName()
-        );
-
-        userRepository.save(userEntity);
-    }
-
-    public void login(
-            LoginUserRequestDto requestDto,
-            HttpServletRequest request
-    ) {
-        UserEntity findUserEntity = userRepository.findByEmail(requestDto.getEmail())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist email = " + requestDto.getEmail()));
-        if (!passwordEncoder.matches(requestDto.getPassword(), findUserEntity.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "wrong password");
-        }
-
-        HttpSession session = request.getSession(true);
-        session.setAttribute("userId", findUserEntity.getId());
-    }
+    private final DeletedUserRepository deletedUserRepository;
 
     @Transactional(readOnly = true)
     public UserResponseDto getUserProfile(
@@ -118,6 +84,9 @@ public class UserService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
         }
+
+        DeletedUserEntity deletedUser = new DeletedUserEntity(user.getEmail());
+        deletedUserRepository.save(deletedUser);
 
         userRepository.deleteById(userId);
         session.invalidate();

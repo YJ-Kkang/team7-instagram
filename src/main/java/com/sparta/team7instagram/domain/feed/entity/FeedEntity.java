@@ -40,8 +40,8 @@ public class FeedEntity extends BaseEntity {
         this.id = id;
         this.content = content;
         this.user = user;
-        this.feedTags = feedTags;
-        this.feedLikes = feedLikes;
+        this.feedTags = (feedTags == null) ? new ArrayList<>() : feedTags;
+        this.feedLikes = (feedLikes == null) ? new ArrayList<>() : feedLikes;
     }
 
     public void addFeedTag(FeedTagEntity feedTag) {
@@ -64,5 +64,11 @@ public class FeedEntity extends BaseEntity {
 
     public void removeFeedLike(FeedLikeEntity feedLike) {
         this.feedLikes.remove(feedLike);
+    }
+
+    public void updateContent(String content) {
+        if (content != null) {
+            this.content = content;
+        }
     }
 }

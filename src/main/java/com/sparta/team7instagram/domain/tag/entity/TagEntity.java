@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,13 +25,13 @@ public class TagEntity {
     private String name;
 
     @OneToMany(mappedBy = "tag")
-    private List<FeedTagEntity> feedTags;
+    private List<FeedTagEntity> feedTags = new ArrayList<>();
 
     @Builder
     public TagEntity(Long id, String name, List<FeedTagEntity> feedTags) {
         this.id = id;
         this.name = name;
-        this.feedTags = feedTags;
+        this.feedTags = (feedTags == null) ? new ArrayList<>() : feedTags;
     }
 
     public void addFeedTag(FeedTagEntity feedTag) {
